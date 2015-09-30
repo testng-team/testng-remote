@@ -27,6 +27,7 @@ import org.testng.reporters.TestHTMLReporter;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -136,13 +137,16 @@ public class RemoteTestNG extends TestNG {
   protected ITestRunnerFactory buildTestRunnerFactory() {
     if(null == m_customTestRunnerFactory) {
       m_customTestRunnerFactory= new ITestRunnerFactory() {
-          @Override
           public TestRunner newTestRunner(ISuite suite, XmlTest xmlTest,
-              Collection<IInvokedMethodListener> listeners) {
+              List<IInvokedMethodListener> listeners) {
+            List<IInvokedMethodListener> invokedMethodListeners = new ArrayList<>();
+            for (IInvokedMethodListener listener : listeners) {
+              invokedMethodListeners.add(listener);
+            }
             TestRunner runner =
               new TestRunner(getConfiguration(), suite, xmlTest,
                   false /*skipFailedInvocationCounts */,
-                  listeners);
+                  invokedMethodListeners);
             if (m_useDefaultListeners) {
               runner.addListener(new TestHTMLReporter());
               runner.addListener(new JUnitXMLReporter());
@@ -266,10 +270,13 @@ public class RemoteTestNG extends TestNG {
       m_messageSender= smsh;
     }
 
-    @Override
     public TestRunner newTestRunner(ISuite suite, XmlTest test,
-        Collection<IInvokedMethodListener> listeners) {
-      TestRunner tr = m_delegateFactory.newTestRunner(suite, test, listeners);
+        List<IInvokedMethodListener> listeners) {
+      List<IInvokedMethodListener> invokedMethodListeners = new ArrayList<>();
+      for (IInvokedMethodListener listener : listeners) {
+        invokedMethodListeners.add(listener);
+      }
+      TestRunner tr = m_delegateFactory.newTestRunner(suite, test, invokedMethodListeners);
       tr.addListener(new RemoteTestListener(suite, test, m_messageSender));
       return tr;
     }

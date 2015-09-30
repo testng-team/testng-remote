@@ -1,5 +1,6 @@
 package org.testng.remote;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -107,7 +108,13 @@ public class SuiteDispatcher
 						tmpSuite.setName("Temporary suite for " + test.getName());
 						tmpSuite.setParallel(suite.getParallel());
 						tmpSuite.setParentModule(suite.getParentModule());
-						tmpSuite.setGuiceStage(suite.getGuiceStage());
+						try {
+						  Method getGuiceStageMethod = XmlSuite.class.getDeclaredMethod("getGuiceStage");
+						  Method setGuiceStageMethod = XmlSuite.class.getDeclaredMethod("setGuiceStage");
+						  setGuiceStageMethod.invoke(tmpSuite, getGuiceStageMethod.invoke(suite));
+						} catch (NoSuchMethodException e) {
+						  // no op
+						}
 						tmpSuite.setParameters(suite.getParameters());
 						tmpSuite.setThreadCount(suite.getThreadCount());
             tmpSuite.setDataProviderThreadCount(suite.getDataProviderThreadCount());
