@@ -139,14 +139,10 @@ public class RemoteTestNG extends TestNG {
       m_customTestRunnerFactory= new ITestRunnerFactory() {
           public TestRunner newTestRunner(ISuite suite, XmlTest xmlTest,
               List<IInvokedMethodListener> listeners) {
-            List<IInvokedMethodListener> invokedMethodListeners = new ArrayList<>();
-            for (IInvokedMethodListener listener : listeners) {
-              invokedMethodListeners.add(listener);
-            }
             TestRunner runner =
               new TestRunner(getConfiguration(), suite, xmlTest,
                   false /*skipFailedInvocationCounts */,
-                  invokedMethodListeners);
+                  listenerCollectionToArray(listeners));
             if (m_useDefaultListeners) {
               runner.addListener(new TestHTMLReporter());
               runner.addListener(new JUnitXMLReporter());
@@ -272,13 +268,17 @@ public class RemoteTestNG extends TestNG {
 
     public TestRunner newTestRunner(ISuite suite, XmlTest test,
         List<IInvokedMethodListener> listeners) {
-      List<IInvokedMethodListener> invokedMethodListeners = new ArrayList<>();
-      for (IInvokedMethodListener listener : listeners) {
-        invokedMethodListeners.add(listener);
-      }
-      TestRunner tr = m_delegateFactory.newTestRunner(suite, test, invokedMethodListeners);
+      TestRunner tr = m_delegateFactory.newTestRunner(suite, test, listenerCollectionToArray(listeners));
       tr.addListener(new RemoteTestListener(suite, test, m_messageSender));
       return tr;
     }
+  }
+  
+  private static List<IInvokedMethodListener> listenerCollectionToArray(Collection<IInvokedMethodListener> listeners) {
+    List<IInvokedMethodListener> invokedMethodListeners = new ArrayList<>();
+    for (IInvokedMethodListener listener : listeners) {
+      invokedMethodListeners.add(listener);
+    }
+    return invokedMethodListeners;
   }
 }
