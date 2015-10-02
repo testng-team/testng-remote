@@ -3,6 +3,7 @@ package org.testng.remote;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.testng.ISuite;
@@ -107,13 +108,21 @@ public class SuiteDispatcher
             tmpSuite.setSkipFailedInvocationCounts(suite.skipFailedInvocationCounts());
 						tmpSuite.setName("Temporary suite for " + test.getName());
 						tmpSuite.setParallel(suite.getParallel());
-						tmpSuite.setParentModule(suite.getParentModule());
+						try {
+              Method getParentModuleMethod = XmlSuite.class.getDeclaredMethod("getParentModule");
+              Method setParentModuleMethod = XmlSuite.class.getDeclaredMethod("setParentModule");
+              setParentModuleMethod.invoke(tmpSuite, getParentModuleMethod.invoke(suite));
+            } catch (Exception e) {
+              // no op, use reflection above to make it compatible with 6.5.1
+              e.printStackTrace();
+            }
 						try {
 						  Method getGuiceStageMethod = XmlSuite.class.getDeclaredMethod("getGuiceStage");
 						  Method setGuiceStageMethod = XmlSuite.class.getDeclaredMethod("setGuiceStage");
 						  setGuiceStageMethod.invoke(tmpSuite, getGuiceStageMethod.invoke(suite));
-						} catch (NoSuchMethodException e) {
-						  // no op
+						} catch (Exception e) {
+						  // no op, use reflection above to make it compatible with 6.8.1
+						  e.printStackTrace();
 						}
 						tmpSuite.setParameters(suite.getParameters());
 						tmpSuite.setThreadCount(suite.getThreadCount());
@@ -129,7 +138,13 @@ public class SuiteDispatcher
 						tmpTest.setMethodSelectors(test.getMethodSelectors());
 						tmpTest.setName(test.getName());
 						tmpTest.setParallel(test.getParallel());
-						tmpTest.setParameters(test.getLocalParameters());
+            try {
+              Method getLocalParametersMethod = XmlTest.class.getDeclaredMethod("getLocalParameters");
+              tmpTest.setParameters((Map<String, String>) getLocalParametersMethod.invoke(test));
+            } catch (Exception e) {
+              // no op, use reflection above to make it compatible with 6.5.1
+              e.printStackTrace();
+            }
 						tmpTest.setVerbose(test.getVerbose());
 						tmpTest.setXmlClasses(test.getXmlClasses());
 						tmpTest.setXmlPackages(test.getXmlPackages());
