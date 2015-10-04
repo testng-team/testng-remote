@@ -30,7 +30,9 @@ import org.testng.xml.XmlTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Extension of TestNG registering a remote TestListener.
@@ -273,12 +275,20 @@ public class RemoteTestNG extends TestNG {
       return tr;
     }
   }
-  
+
   private static List<IInvokedMethodListener> listenerCollectionToArray(Collection<IInvokedMethodListener> listeners) {
-    List<IInvokedMethodListener> invokedMethodListeners = new ArrayList<>();
+    // Convert Collection to Set to make sure only register one instance for invoked method listener 
+    Set<IInvokedMethodListener> invokedMethodListenerSet = new HashSet<>();
     for (IInvokedMethodListener listener : listeners) {
+      invokedMethodListenerSet.add(listener);
+    }
+
+    // Convert the Set to List is to be back-compatible with 6.8.x or below
+    List<IInvokedMethodListener> invokedMethodListeners = new ArrayList<>();
+    for (IInvokedMethodListener listener : invokedMethodListenerSet) {
       invokedMethodListeners.add(listener);
     }
+
     return invokedMethodListeners;
   }
 }
