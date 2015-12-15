@@ -16,6 +16,7 @@ import org.testng.TestRunner;
 import org.testng.collections.Lists;
 import org.testng.remote.strprotocol.GenericMessage;
 import org.testng.remote.strprotocol.IMessageSender;
+import org.testng.remote.strprotocol.JsonMessageSender;
 import org.testng.remote.strprotocol.MessageHelper;
 import org.testng.remote.strprotocol.MessageHub;
 import org.testng.remote.strprotocol.RemoteTestListener;
@@ -60,6 +61,9 @@ public class RemoteTestNG extends TestNG {
   /** Port used for the serialized protocol */
   private static Integer m_serPort = null;
 
+  /** Protocol used for inter-communication */
+  private static String m_protocol;
+
   private static boolean m_debug;
 
   private static boolean m_dontExit;
@@ -79,9 +83,7 @@ public class RemoteTestNG extends TestNG {
 
   @Override
   public void run() {
-    IMessageSender sender = m_serPort != null
-        ? new SerializedMessageSender(m_host, m_serPort, m_ack)
-        : new StringMessageSender(m_host, m_port);
+    IMessageSender sender = getMessageSender();
     final MessageHub msh = new MessageHub(sender);
     msh.setDebug(isDebug());
     try {
@@ -128,6 +130,26 @@ public class RemoteTestNG extends TestNG {
         System.exit(0);
       }
     }
+  }
+
+  private IMessageSender getMessageSender() {
+    if (m_protocol != null) {
+      switch (m_protocol) {
+      case "object":
+        return new SerializedMessageSender(m_host, m_serPort, m_ack);
+      case "string":
+        return new StringMessageSender(m_host, m_port);
+      case "json":
+        return new JsonMessageSender(m_host, m_serPort, m_ack);
+      default:
+        throw new IllegalArgumentException("unrecoginzed protocol: " + m_protocol);
+      }
+    }
+
+    // fall back to original behivour
+    return m_serPort != null
+        ? new SerializedMessageSender(m_host, m_serPort, m_ack)
+        : new StringMessageSender(m_host, m_port);
   }
 
   /**
@@ -192,6 +214,7 @@ public class RemoteTestNG extends TestNG {
     remoteTestNg.configure(cla);
     remoteTestNg.setHost(cla.host);
     m_serPort = ra.serPort;
+    m_protocol = ra.protocol;
     remoteTestNg.m_port = cla.port;
     if (isVerbose()) {
       StringBuilder sb = new StringBuilder("Invoked with ");

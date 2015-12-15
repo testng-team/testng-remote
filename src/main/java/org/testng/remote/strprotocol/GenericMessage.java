@@ -1,7 +1,6 @@
 package org.testng.remote.strprotocol;
 
-
-
+import com.google.gson.annotations.SerializedName;
 
 /**
  * A generic message to be used with remote listeners.
@@ -13,9 +12,11 @@ package org.testng.remote.strprotocol;
 public class GenericMessage implements IStringMessage {
   private static final long serialVersionUID = 1440074281953763545L;
 //  protected Map m_properties;
+  @SerializedName("messageType")
   protected final int m_messageType;
+  @SerializedName("suiteCount")
   private int m_suiteCount;
-
+  @SerializedName("testCount")
   private int m_testCount;
 
   public GenericMessage(final int type) {
