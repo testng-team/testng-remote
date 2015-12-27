@@ -2,6 +2,8 @@ package org.testng.remote.strprotocol;
 
 import org.testng.ITestContext;
 
+import com.google.gson.annotations.SerializedName;
+
 
 /**
  * An <code>IStringMessage</code> implementation for test events.
@@ -10,13 +12,21 @@ import org.testng.ITestContext;
  */
 public class TestMessage implements IStringMessage {
   private static final long serialVersionUID = -5039267143570559640L;
+  @SerializedName("testStart")
   protected final boolean m_testStart;
+  @SerializedName("suiteName")
   protected final String m_suiteName;
+  @SerializedName("testName")
   protected final String m_testName;
+  @SerializedName("testMethodCount")
   protected final int m_testMethodCount;
+  @SerializedName("passedTestCount")
   protected final int m_passedTestCount;
+  @SerializedName("failedTestCount")
   protected final int m_failedTestCount;
+  @SerializedName("skippedTestCount")
   protected final int m_skippedTestCount;
+  @SerializedName("successPercentageFailedTestCount")
   protected final int m_successPercentageFailedTestCount;
 
   public TestMessage(final boolean isTestStart,

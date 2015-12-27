@@ -7,6 +7,10 @@ public class RemoteArgs {
   @Parameter(names = PORT, description = "The port for the serialization protocol")
   public Integer serPort;
 
+  public static final String PROTOCOL = "-protocol";
+  @Parameter(names = PROTOCOL, description = "The protocol for message inter-communication")
+  public String protocol;
+
   public static final String DONT_EXIT= "-dontexit";
   @Parameter(names = DONT_EXIT, description = "Do not exit the JVM once done")
   public boolean dontExit = false;

@@ -9,6 +9,8 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.collections.Lists;
 
+import com.google.gson.annotations.SerializedName;
+
 import static org.testng.internal.Utils.isStringEmpty;
 
 
@@ -19,19 +21,33 @@ import static org.testng.internal.Utils.isStringEmpty;
  */
 public class TestResultMessage implements IStringMessage {
   private static final long serialVersionUID = -4157150777889117479L;
+  @SerializedName("messageType")
   protected int    m_messageType;
+  @SerializedName("suiteName")
   protected String m_suiteName;
+  @SerializedName("testName")
   protected String m_testName;
+  @SerializedName("testClassName")
   protected String m_testClassName;
+  @SerializedName("testMethodName")
   protected String m_testMethodName;
+  @SerializedName("stackTrace")
   protected String m_stackTrace;
+  @SerializedName("startMillis")
   protected long m_startMillis;
+  @SerializedName("endMillis")
   protected long m_endMillis;
+  @SerializedName("parameters")
   protected String[] m_parameters= new String[0];
+  @SerializedName("paramTypes")
   protected String[] m_paramTypes= new String[0];
+  @SerializedName("testDescription")
   private String m_testDescription;
+  @SerializedName("invocationCount")
   private int m_invocationCount;
+  @SerializedName("currentInvocationCount")
   private int m_currentInvocationCount;
+  @SerializedName("instanceName")
   private String m_instanceName;
 
   /**

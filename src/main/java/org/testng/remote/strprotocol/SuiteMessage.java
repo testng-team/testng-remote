@@ -9,6 +9,8 @@ import org.testng.ITestNGMethod;
 import org.testng.collections.Lists;
 import org.testng.collections.Maps;
 
+import com.google.gson.annotations.SerializedName;
+
 
 /**
  * A <code>IStringMessage</code> implementation for suite running events.
@@ -17,9 +19,13 @@ import org.testng.collections.Maps;
  */
 public class SuiteMessage implements IStringMessage {
   private static final long serialVersionUID = -4298528261942620419L;
+  @SerializedName("suiteName")
   protected final String m_suiteName;
+  @SerializedName("methodCount")
   protected final int m_testMethodCount;
+  @SerializedName("startSuiteRun")
   protected final boolean m_startSuite;
+  @SerializedName("excludedMethods")
   private List<String> m_excludedMethods = Lists.newArrayList();
   private Map<String, String> m_descriptions;
 
