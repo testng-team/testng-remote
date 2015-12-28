@@ -1,6 +1,11 @@
 package org.testng.remote;
 
-import org.testng.*;
+import org.testng.ISuite;
+import org.testng.ISuiteResult;
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+import org.testng.SuiteRunner;
+import org.testng.TestNGException;
 import org.testng.collections.Lists;
 import org.testng.internal.IConfiguration;
 import org.testng.internal.Invoker;

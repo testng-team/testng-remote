@@ -2,15 +2,18 @@ package org.testng.remote;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import org.testng.*;
+import org.testng.CommandLineArgs;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
+import org.testng.ITestRunnerFactory;
+import org.testng.TestNG;
+import org.testng.TestNGException;
 import org.testng.collections.Lists;
 import org.testng.remote.strprotocol.*;
-import org.testng.reporters.JUnitXMLReporter;
-import org.testng.reporters.TestHTMLReporter;
 import org.testng.xml.XmlSuite;
-import org.testng.xml.XmlTest;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.testng.internal.Utils.defaultIfStringEmpty;
 
