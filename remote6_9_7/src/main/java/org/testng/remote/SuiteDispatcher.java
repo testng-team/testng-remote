@@ -1,17 +1,6 @@
 package org.testng.remote;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.testng.ISuite;
-import org.testng.ISuiteResult;
-import org.testng.ITestListener;
-import org.testng.ITestResult;
-import org.testng.SuiteRunner;
-import org.testng.TestNGException;
+import org.testng.*;
 import org.testng.collections.Lists;
 import org.testng.internal.IConfiguration;
 import org.testng.internal.Invoker;
@@ -21,6 +10,12 @@ import org.testng.remote.adapter.IMasterAdapter;
 import org.testng.remote.adapter.RemoteResultListener;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
+
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Dispatches test suits according to the strategy defined.
@@ -53,7 +48,7 @@ public class SuiteDispatcher
 	/**
 	 * Creates a new suite dispatcher.
 	 */
-	public SuiteDispatcher( String propertiesFile) throws TestNGException
+	public SuiteDispatcher(String propertiesFile) throws TestNGException
 	{
 		try
 		{
@@ -108,22 +103,8 @@ public class SuiteDispatcher
             tmpSuite.setSkipFailedInvocationCounts(suite.skipFailedInvocationCounts());
 						tmpSuite.setName("Temporary suite for " + test.getName());
 						tmpSuite.setParallel(suite.getParallel());
-						try {
-              Method getParentModuleMethod = XmlSuite.class.getDeclaredMethod("getParentModule");
-              Method setParentModuleMethod = XmlSuite.class.getDeclaredMethod("setParentModule");
-              setParentModuleMethod.invoke(tmpSuite, getParentModuleMethod.invoke(suite));
-            } catch (Exception e) {
-              // no op, use reflection above to make it compatible with 6.5.1
-              e.printStackTrace();
-            }
-						try {
-						  Method getGuiceStageMethod = XmlSuite.class.getDeclaredMethod("getGuiceStage");
-						  Method setGuiceStageMethod = XmlSuite.class.getDeclaredMethod("setGuiceStage");
-						  setGuiceStageMethod.invoke(tmpSuite, getGuiceStageMethod.invoke(suite));
-						} catch (Exception e) {
-						  // no op, use reflection above to make it compatible with 6.8.1
-						  e.printStackTrace();
-						}
+						tmpSuite.setParentModule(suite.getParentModule());
+						tmpSuite.setGuiceStage(suite.getGuiceStage());
 						tmpSuite.setParameters(suite.getParameters());
 						tmpSuite.setThreadCount(suite.getThreadCount());
             tmpSuite.setDataProviderThreadCount(suite.getDataProviderThreadCount());
@@ -138,13 +119,7 @@ public class SuiteDispatcher
 						tmpTest.setMethodSelectors(test.getMethodSelectors());
 						tmpTest.setName(test.getName());
 						tmpTest.setParallel(test.getParallel());
-            try {
-              Method getLocalParametersMethod = XmlTest.class.getDeclaredMethod("getLocalParameters");
-              tmpTest.setParameters((Map<String, String>) getLocalParametersMethod.invoke(test));
-            } catch (Exception e) {
-              // no op, use reflection above to make it compatible with 6.5.1
-              e.printStackTrace();
-            }
+						tmpTest.setParameters(test.getLocalParameters());
 						tmpTest.setVerbose(test.getVerbose());
 						tmpTest.setXmlClasses(test.getXmlClasses());
 						tmpTest.setXmlPackages(test.getXmlPackages());

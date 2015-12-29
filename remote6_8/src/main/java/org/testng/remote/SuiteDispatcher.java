@@ -16,7 +16,6 @@ import org.testng.remote.adapter.RemoteResultListener;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -120,6 +119,7 @@ public class SuiteDispatcher
 						tmpTest.setName(test.getName());
 						tmpTest.setParallel(test.getParallel());
 						tmpTest.setParameters(test.getTestParameters());
+						tmpTest.setParameters(test.getLocalParameters());
 						tmpTest.setVerbose(test.getVerbose());
 						tmpTest.setXmlClasses(test.getXmlClasses());
 						tmpTest.setXmlPackages(test.getXmlPackages());
