@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>testng-remote-common</artifactId>
-    <name>TestNG - Remote - Common</name>
+    <name>TestNG Remote - Common</name>
 
     <properties>
         <testng.version>6.5.1</testng.version>

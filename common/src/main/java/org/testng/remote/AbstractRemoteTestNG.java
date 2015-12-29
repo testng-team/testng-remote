@@ -124,7 +124,7 @@ public abstract class AbstractRemoteTestNG extends TestNG {
       case "json":
         return new JsonMessageSender(m_host, m_serPort, m_ack);
       default:
-        throw new IllegalArgumentException("unrecoginzed protocol: " + m_protocol);
+        throw new IllegalArgumentException("unrecognized protocol: " + m_protocol);
       }
     }
 
