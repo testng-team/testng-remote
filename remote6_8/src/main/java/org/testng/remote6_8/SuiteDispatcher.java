@@ -1,6 +1,11 @@
-package org.testng.remote;
+package org.testng.remote6_8;
 
-import org.testng.*;
+import org.testng.ISuite;
+import org.testng.ISuiteResult;
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+import org.testng.SuiteRunner;
+import org.testng.TestNGException;
 import org.testng.collections.Lists;
 import org.testng.internal.IConfiguration;
 import org.testng.internal.Invoker;
@@ -11,11 +16,7 @@ import org.testng.remote.adapter.RemoteResultListener;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Dispatches test suits according to the strategy defined.
@@ -103,8 +104,6 @@ public class SuiteDispatcher
             tmpSuite.setSkipFailedInvocationCounts(suite.skipFailedInvocationCounts());
 						tmpSuite.setName("Temporary suite for " + test.getName());
 						tmpSuite.setParallel(suite.getParallel());
-						tmpSuite.setParentModule(suite.getParentModule());
-						tmpSuite.setGuiceStage(suite.getGuiceStage());
 						tmpSuite.setParameters(suite.getParameters());
 						tmpSuite.setThreadCount(suite.getThreadCount());
             tmpSuite.setDataProviderThreadCount(suite.getDataProviderThreadCount());
@@ -119,6 +118,7 @@ public class SuiteDispatcher
 						tmpTest.setMethodSelectors(test.getMethodSelectors());
 						tmpTest.setName(test.getName());
 						tmpTest.setParallel(test.getParallel());
+						tmpTest.setParameters(test.getTestParameters());
 						tmpTest.setParameters(test.getLocalParameters());
 						tmpTest.setVerbose(test.getVerbose());
 						tmpTest.setXmlClasses(test.getXmlClasses());
