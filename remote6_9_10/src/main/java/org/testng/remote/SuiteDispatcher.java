@@ -37,7 +37,6 @@ public class SuiteDispatcher extends AbstractSuiteDispatcher {
 		tmpTest.setMethodSelectors(test.getMethodSelectors());
 		tmpTest.setName(test.getName());
 		tmpTest.setParallel(test.getParallel());
-		tmpTest.setParameters(test.getTestParameters());
 		tmpTest.setParameters(test.getLocalParameters());
 		tmpTest.setVerbose(test.getVerbose());
 		tmpTest.setXmlClasses(test.getXmlClasses());
