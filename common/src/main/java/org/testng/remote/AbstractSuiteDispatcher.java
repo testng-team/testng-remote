@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Dispatches test suits according to the strategy defined.
+ * Dispatches test suites according to the strategy defined.
  *
  *
  * @author	Guy Korland
