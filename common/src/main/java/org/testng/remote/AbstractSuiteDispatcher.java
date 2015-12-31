@@ -10,6 +10,7 @@ import org.testng.collections.Lists;
 import org.testng.internal.IConfiguration;
 import org.testng.internal.Invoker;
 import org.testng.internal.PropertiesFile;
+import org.testng.internal.Utils;
 import org.testng.remote.adapter.DefaultMastertAdapter;
 import org.testng.remote.adapter.IMasterAdapter;
 import org.testng.remote.adapter.RemoteResultListener;
@@ -69,6 +70,9 @@ public abstract class AbstractSuiteDispatcher
 			if (adapter == null) {
 				// trying deprecated value
 				adapter = properties.getProperty(MASTER_ADPATER);
+				if (adapter != null) {
+					Utils.log("AbstractSuiteDispatcher", 1, "[WARN] '" + MASTER_ADPATER + "' is deprecated, use '" + MASTER_ADAPTER + "' instead.");
+				}
 			}
 			if (adapter == null) {
 				m_masterAdapter = new DefaultMastertAdapter();
