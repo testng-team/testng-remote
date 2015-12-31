@@ -2,6 +2,7 @@ package org.testng.remote6_5;
 
 import java.util.List;
 
+import org.osgi.framework.VersionRange;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ITestRunnerFactory;
@@ -18,6 +19,12 @@ import com.google.auto.service.AutoService;
 
 @AutoService(IRemoteTestNG.class)
 public class RemoteTestNG extends AbstractRemoteTestNG {
+
+  private static final VersionRange RANGE = new VersionRange("[6.5.1,6.8.1)");
+
+  public RemoteTestNG() {
+    super(RANGE);
+  }
 
   @Override
   protected ITestRunnerFactory buildTestRunnerFactory() {
