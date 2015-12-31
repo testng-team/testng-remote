@@ -34,7 +34,9 @@ public abstract class AbstractSuiteDispatcher
 	 */
 	public static final String MASTER_STRATEGY = "testng.master.strategy";
 	public static final String VERBOSE = "testng.verbose";
+	@Deprecated
 	public static final String MASTER_ADPATER = "testng.master.adpter";
+	public static final String MASTER_ADAPTER = "testng.master.adapter";
 
 	/**
 	 * Values allowed for STRATEGY
@@ -45,7 +47,7 @@ public abstract class AbstractSuiteDispatcher
 	final private int m_verbose;
 	final private boolean m_isStrategyTest;
 
-	final private IMasterAdapter m_masterAdpter;
+	final private IMasterAdapter m_masterAdapter;
 
 
 	/**
@@ -63,17 +65,18 @@ public abstract class AbstractSuiteDispatcher
 			String strategy = properties.getProperty(MASTER_STRATEGY, STRATEGY_SUITE);
 			m_isStrategyTest = STRATEGY_TEST.equalsIgnoreCase(strategy);
 
-			String adapter = properties.getProperty(MASTER_ADPATER);
-			if( adapter == null)
-			{
-				m_masterAdpter = new DefaultMastertAdapter();
+			String adapter = properties.getProperty(MASTER_ADAPTER);
+			if (adapter == null) {
+				// trying deprecated value
+				adapter = properties.getProperty(MASTER_ADPATER);
 			}
-			else
-			{
+			if (adapter == null) {
+				m_masterAdapter = new DefaultMastertAdapter();
+			}  else {
 				Class clazz = Class.forName(adapter);
-				m_masterAdpter = (IMasterAdapter)clazz.newInstance();
+				m_masterAdapter = (IMasterAdapter)clazz.newInstance();
 			}
-			m_masterAdpter.init(properties);
+			m_masterAdapter.init(properties);
 		}
 		catch( Exception e)
 		{
@@ -102,17 +105,17 @@ public abstract class AbstractSuiteDispatcher
 					for (XmlTest test : suite.getTests()) {
 						XmlSuite tmpSuite = copy(suite, test);
 						XmlTest tmpTest = copy(test, tmpSuite);
-						m_masterAdpter.runSuitesRemotely(tmpSuite, listener);
+						m_masterAdapter.runSuitesRemotely(tmpSuite, listener);
 					}
 				}
 				else
 				{
-					m_masterAdpter.runSuitesRemotely(suite, listener);
+					m_masterAdapter.runSuitesRemotely(suite, listener);
 				}
 				result.add(suiteRunner);
 			}
 
-			m_masterAdpter.awaitTermination(100000);
+			m_masterAdapter.awaitTermination(100_000);
 
 			//
 			// Run test listeners
