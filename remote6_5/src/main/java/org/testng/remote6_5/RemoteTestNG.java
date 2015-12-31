@@ -1,6 +1,7 @@
 package org.testng.remote6_5;
 
-import com.google.auto.service.AutoService;
+import java.util.List;
+
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ITestRunnerFactory;
@@ -13,11 +14,7 @@ import org.testng.reporters.JUnitXMLReporter;
 import org.testng.reporters.TestHTMLReporter;
 import org.testng.xml.XmlTest;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.google.auto.service.AutoService;
 
 @AutoService(IRemoteTestNG.class)
 public class RemoteTestNG extends AbstractRemoteTestNG {
@@ -32,7 +29,7 @@ public class RemoteTestNG extends AbstractRemoteTestNG {
           TestRunner runner =
                   new TestRunner(getConfiguration(), suite, xmlTest,
                           false /*skipFailedInvocationCounts */,
-                          listenerCollectionToArray(listeners));
+                          listeners);
           if (m_useDefaultListeners) {
             runner.addListener(new TestHTMLReporter());
             runner.addListener(new JUnitXMLReporter());
@@ -63,25 +60,10 @@ public class RemoteTestNG extends AbstractRemoteTestNG {
     @Override
     public TestRunner newTestRunner(ISuite suite, XmlTest test,
         List<IInvokedMethodListener> listeners) {
-      TestRunner tr = m_delegateFactory.newTestRunner(suite, test, listenerCollectionToArray(listeners));
+      TestRunner tr = m_delegateFactory.newTestRunner(suite, test, listeners);
       tr.addListener(new RemoteTestListener(suite, test, m_messageSender));
       return tr;
     }
   }
 
-  private static List<IInvokedMethodListener> listenerCollectionToArray(Collection<IInvokedMethodListener> listeners) {
-    // Convert Collection to Set to make sure only register one instance for invoked method listener 
-    Set<IInvokedMethodListener> invokedMethodListenerSet = new HashSet<>();
-    for (IInvokedMethodListener listener : listeners) {
-      invokedMethodListenerSet.add(listener);
-    }
-
-    // Convert the Set to List is to be back-compatible with 6.8.x or below
-    List<IInvokedMethodListener> invokedMethodListeners = new ArrayList<>();
-    for (IInvokedMethodListener listener : invokedMethodListenerSet) {
-      invokedMethodListeners.add(listener);
-    }
-
-    return invokedMethodListeners;
-  }
 }
