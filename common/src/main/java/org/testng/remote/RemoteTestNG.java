@@ -5,9 +5,7 @@ import com.beust.jcommander.ParameterException;
 import org.testng.CommandLineArgs;
 import org.testng.TestNGException;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.ServiceLoader;
+import java.util.*;
 
 public class RemoteTestNG {
 
@@ -23,18 +21,23 @@ public class RemoteTestNG {
     private static boolean m_debug;
 
     public static void main(String[] args) throws ParameterException {
-        Iterator<IRemoteTestNG> remote = ServiceLoader.load(IRemoteTestNG.class).iterator();
-        if (!remote.hasNext()) {
-            // TODO error or find the best impl (with version in args?
-        }
-        IRemoteTestNG remoteTestNg = remote.next();
-        if (remote.hasNext()) {
-            // TODO error or find the best impl (with version in args?
-        }
-
         CommandLineArgs cla = new CommandLineArgs();
         RemoteArgs ra = new RemoteArgs();
         new JCommander(Arrays.asList(cla, ra), args);
+
+        List<IRemoteTestNG> remotes = new ArrayList<>();
+        for (IRemoteTestNG remote : ServiceLoader.load(IRemoteTestNG.class)) {
+            if (remote.accept(ra.version)) {
+                remotes.add(remote);
+            }
+        }
+        if (remotes.isEmpty()) {
+            throw new TestNGException(ra.version + " is not a supported TestNG version");
+        }
+        if (remotes.size() > 1) {
+            p("More than one working implementation, we will use the first one");
+        }
+        IRemoteTestNG remoteTestNg = remotes.get(0);
         remoteTestNg.dontExit(ra.dontExit);
         if (cla.port != null && ra.serPort != null) {
             throw new TestNGException("Can only specify one of " + CommandLineArgs.PORT

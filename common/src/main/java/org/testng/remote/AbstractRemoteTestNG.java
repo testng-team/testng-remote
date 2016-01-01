@@ -1,5 +1,7 @@
 package org.testng.remote;
 
+import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.testng.CommandLineArgs;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
@@ -38,6 +40,17 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
   private boolean m_dontExit;
 
   private boolean m_ack;
+
+  private final VersionRange m_range;
+
+  protected AbstractRemoteTestNG(VersionRange range) {
+    m_range = range;
+  }
+
+  @Override
+  public boolean accept(Version version) {
+    return m_range.includes(version);
+  }
 
   @Override
   public void dontExit(boolean dontExit) {

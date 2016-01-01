@@ -1,6 +1,8 @@
 package org.testng.remote;
 
+import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
+import org.osgi.framework.Version;
 
 public class RemoteArgs {
   public static final String PORT = "-serport";
@@ -18,4 +20,16 @@ public class RemoteArgs {
   public static final String ACK = "-ack";
   @Parameter(names = ACK, description = "Use ACK's")
   public boolean ack = false;
+
+  public static final String VERSION = "-version";
+  @Parameter(names = VERSION, description = "TestNG target version", required = true, converter = VersionConverter.class)
+  public Version version;
+
+  public static class VersionConverter implements IStringConverter<Version> {
+
+    @Override
+    public Version convert(String value) {
+      return new Version(value);
+    }
+  }
 }
