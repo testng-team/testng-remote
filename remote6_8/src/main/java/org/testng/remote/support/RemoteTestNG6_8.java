@@ -1,30 +1,19 @@
-package org.testng.remote6_8;
+package org.testng.remote.support;
 
-import java.util.List;
-
-import org.osgi.framework.VersionRange;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ITestRunnerFactory;
 import org.testng.TestRunner;
 import org.testng.remote.AbstractRemoteTestNG;
-import org.testng.remote.IRemoteTestNG;
 import org.testng.remote.strprotocol.MessageHub;
 import org.testng.remote.strprotocol.RemoteTestListener;
 import org.testng.reporters.JUnitXMLReporter;
 import org.testng.reporters.TestHTMLReporter;
 import org.testng.xml.XmlTest;
 
-import com.google.auto.service.AutoService;
+import java.util.List;
 
-@AutoService(IRemoteTestNG.class)
-public class RemoteTestNG extends AbstractRemoteTestNG {
-
-  private static final VersionRange RANGE = new VersionRange("[6.8.1,6.9.7)");
-
-  public RemoteTestNG() {
-    super(RANGE);
-  }
+public class RemoteTestNG6_8 extends AbstractRemoteTestNG {
 
   @Override
   protected ITestRunnerFactory buildTestRunnerFactory() {

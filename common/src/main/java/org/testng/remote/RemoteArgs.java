@@ -22,13 +22,16 @@ public class RemoteArgs {
   public boolean ack = false;
 
   public static final String VERSION = "-version";
-  @Parameter(names = VERSION, description = "TestNG target version", required = true, converter = VersionConverter.class)
+  @Parameter(names = VERSION, description = "TestNG target version", converter = VersionConverter.class)
   public Version version;
 
   public static class VersionConverter implements IStringConverter<Version> {
 
     @Override
     public Version convert(String value) {
+      if (value == null) {
+        return null;
+      }
       return new Version(value);
     }
   }

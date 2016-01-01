@@ -1,5 +1,6 @@
 package org.testng.remote;
 
+import org.osgi.framework.Version;
 import org.testng.ISuite;
 import org.testng.ISuiteResult;
 import org.testng.ITestListener;
@@ -14,12 +15,12 @@ import org.testng.internal.Utils;
 import org.testng.remote.adapter.DefaultMastertAdapter;
 import org.testng.remote.adapter.IMasterAdapter;
 import org.testng.remote.adapter.RemoteResultListener;
+import org.testng.remote.support.ServiceLoaderHelper;
+import org.testng.remote.support.SuiteDispatcherAdapter;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Dispatches test suites according to the strategy defined.
@@ -28,7 +29,7 @@ import java.util.Properties;
  * @author	Guy Korland
  * @since 	April 20, 2007
  */
-public abstract class AbstractSuiteDispatcher
+public class SuiteDispatcher
 {
 	/**
 	 * Properties allowed in remote.properties
@@ -38,6 +39,7 @@ public abstract class AbstractSuiteDispatcher
 	@Deprecated
 	public static final String MASTER_ADPATER = "testng.master.adpter";
 	public static final String MASTER_ADAPTER = "testng.master.adapter";
+    public static final String VERSION = "testng.version";
 
 	/**
 	 * Values allowed for STRATEGY
@@ -50,11 +52,12 @@ public abstract class AbstractSuiteDispatcher
 
 	final private IMasterAdapter m_masterAdapter;
 
+	private final SuiteDispatcherAdapter adapter;
 
 	/**
 	 * Creates a new suite dispatcher.
 	 */
-	public AbstractSuiteDispatcher(String propertiesFile) throws TestNGException
+	public SuiteDispatcher(String propertiesFile) throws TestNGException
 	{
 		try
 		{
@@ -66,21 +69,24 @@ public abstract class AbstractSuiteDispatcher
 			String strategy = properties.getProperty(MASTER_STRATEGY, STRATEGY_SUITE);
 			m_isStrategyTest = STRATEGY_TEST.equalsIgnoreCase(strategy);
 
-			String adapter = properties.getProperty(MASTER_ADAPTER);
-			if (adapter == null) {
+			String masterAdapter = properties.getProperty(MASTER_ADAPTER);
+			if (masterAdapter == null) {
 				// trying deprecated value
-				adapter = properties.getProperty(MASTER_ADPATER);
-				if (adapter != null) {
+                masterAdapter = properties.getProperty(MASTER_ADPATER);
+				if (masterAdapter != null) {
 					Utils.log("AbstractSuiteDispatcher", 1, "[WARN] '" + MASTER_ADPATER + "' is deprecated, use '" + MASTER_ADAPTER + "' instead.");
 				}
 			}
-			if (adapter == null) {
+			if (masterAdapter == null) {
 				m_masterAdapter = new DefaultMastertAdapter();
-			}  else {
-				Class clazz = Class.forName(adapter);
+			} else {
+				Class clazz = Class.forName(masterAdapter);
 				m_masterAdapter = (IMasterAdapter)clazz.newInstance();
 			}
 			m_masterAdapter.init(properties);
+
+            String version = properties.getProperty(VERSION);
+            adapter = ServiceLoaderHelper.getFirst(version == null ? null : new Version(version)).createSuiteDispatcherAdapter();
 		}
 		catch( Exception e)
 		{
@@ -107,8 +113,8 @@ public abstract class AbstractSuiteDispatcher
 				RemoteResultListener listener = new RemoteResultListener( suiteRunner);
 				if (m_isStrategyTest) {
 					for (XmlTest test : suite.getTests()) {
-						XmlSuite tmpSuite = copy(suite, test);
-						XmlTest tmpTest = copy(test, tmpSuite);
+						XmlSuite tmpSuite = adapter.copy(suite, test);
+						XmlTest tmpTest = adapter.copy(test, tmpSuite);
 						m_masterAdapter.runSuitesRemotely(tmpSuite, listener);
 					}
 				}
@@ -147,7 +153,4 @@ public abstract class AbstractSuiteDispatcher
 		}
 		return result;
 	}
-
-	protected abstract XmlSuite copy(XmlSuite suite, XmlTest test);
-	protected abstract XmlTest copy(XmlTest test, XmlSuite suite);
 }

@@ -1,49 +1,39 @@
-package org.testng.remote6_9_7;
+package org.testng.remote.support;
 
-import com.google.auto.service.AutoService;
-import org.osgi.framework.VersionRange;
+import java.util.List;
+
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ITestRunnerFactory;
 import org.testng.TestRunner;
 import org.testng.remote.AbstractRemoteTestNG;
-import org.testng.remote.IRemoteTestNG;
 import org.testng.remote.strprotocol.MessageHub;
 import org.testng.remote.strprotocol.RemoteTestListener;
 import org.testng.reporters.JUnitXMLReporter;
 import org.testng.reporters.TestHTMLReporter;
 import org.testng.xml.XmlTest;
 
-import java.util.Collection;
-
-@AutoService(IRemoteTestNG.class)
-public class RemoteTestNG extends AbstractRemoteTestNG {
-
-  private static final VersionRange RANGE = new VersionRange("[6.9.7,6.9.10)");
-
-  public RemoteTestNG() {
-    super(RANGE);
-  }
+public class RemoteTestNG6_5 extends AbstractRemoteTestNG {
 
   @Override
   protected ITestRunnerFactory buildTestRunnerFactory() {
     if(null == m_customTestRunnerFactory) {
       m_customTestRunnerFactory= new ITestRunnerFactory() {
-          @Override
-          public TestRunner newTestRunner(ISuite suite, XmlTest xmlTest,
-              Collection<IInvokedMethodListener> listeners) {
-            TestRunner runner =
-              new TestRunner(getConfiguration(), suite, xmlTest,
-                  false /*skipFailedInvocationCounts */,
-                  listeners);
-            if (m_useDefaultListeners) {
-              runner.addListener(new TestHTMLReporter());
-              runner.addListener(new JUnitXMLReporter());
-            }
-
-            return runner;
+        @Override
+        public TestRunner newTestRunner(ISuite suite, XmlTest xmlTest,
+                                        List<IInvokedMethodListener> listeners) {
+          TestRunner runner =
+                  new TestRunner(getConfiguration(), suite, xmlTest,
+                          false /*skipFailedInvocationCounts */,
+                          listeners);
+          if (m_useDefaultListeners) {
+            runner.addListener(new TestHTMLReporter());
+            runner.addListener(new JUnitXMLReporter());
           }
-        };
+
+          return runner;
+        }
+      };
     }
 
     return m_customTestRunnerFactory;
@@ -65,10 +55,11 @@ public class RemoteTestNG extends AbstractRemoteTestNG {
 
     @Override
     public TestRunner newTestRunner(ISuite suite, XmlTest test,
-        Collection<IInvokedMethodListener> listeners) {
+        List<IInvokedMethodListener> listeners) {
       TestRunner tr = m_delegateFactory.newTestRunner(suite, test, listeners);
       tr.addListener(new RemoteTestListener(suite, test, m_messageSender));
       return tr;
     }
   }
+
 }
