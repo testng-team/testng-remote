@@ -25,7 +25,7 @@ public class RemoteArgs {
   @Parameter(names = VERSION, description = "TestNG target version", required = true, converter = VersionConverter.class)
   public Version version;
 
-  private static class VersionConverter implements IStringConverter<Version> {
+  public static class VersionConverter implements IStringConverter<Version> {
 
     @Override
     public Version convert(String value) {
