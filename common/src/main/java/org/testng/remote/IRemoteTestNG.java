@@ -1,6 +1,5 @@
 package org.testng.remote;
 
-import org.osgi.framework.Version;
 import org.testng.CommandLineArgs;
 
 public interface IRemoteTestNG {
@@ -14,5 +13,4 @@ public interface IRemoteTestNG {
     void setProtocol(String protocol);
     void setPort(Integer port);
     void run();
-    boolean accept(Version version);
 }

@@ -2,8 +2,11 @@ package org.testng.remote;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+
+import org.osgi.framework.Version;
 import org.testng.CommandLineArgs;
 import org.testng.TestNGException;
+import org.testng.remote.support.ServiceLoaderHelper;
 
 import java.util.*;
 
@@ -17,6 +20,7 @@ public class RemoteTestNG {
     public static final String PROPERTY_DEBUG = "testng.eclipse.debug";
     public static final String PROPERTY_VERBOSE = "testng.eclipse.verbose";
     // End of Eclipse constants.
+    public static final String VERSION = "testng.version";
 
     private static boolean m_debug;
 
@@ -25,19 +29,9 @@ public class RemoteTestNG {
         RemoteArgs ra = new RemoteArgs();
         new JCommander(Arrays.asList(cla, ra), args);
 
-        List<IRemoteTestNG> remotes = new ArrayList<>();
-        for (IRemoteTestNG remote : ServiceLoader.load(IRemoteTestNG.class)) {
-            if (remote.accept(ra.version)) {
-                remotes.add(remote);
-            }
-        }
-        if (remotes.isEmpty()) {
-            throw new TestNGException(ra.version + " is not a supported TestNG version");
-        }
-        if (remotes.size() > 1) {
-            p("More than one working implementation, we will use the first one");
-        }
-        IRemoteTestNG remoteTestNg = remotes.get(0);
+        Version testngVer = ra.version;
+        System.setProperty(VERSION, testngVer.toString());
+        IRemoteTestNG remoteTestNg = ServiceLoaderHelper.getFirst(testngVer).createRemoteTestNG();
         remoteTestNg.dontExit(ra.dontExit);
         if (cla.port != null && ra.serPort != null) {
             throw new TestNGException("Can only specify one of " + CommandLineArgs.PORT
