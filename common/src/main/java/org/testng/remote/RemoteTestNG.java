@@ -2,6 +2,8 @@ package org.testng.remote;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+
+import org.osgi.framework.Version;
 import org.testng.CommandLineArgs;
 import org.testng.TestNGException;
 import org.testng.remote.support.ServiceLoaderHelper;
@@ -18,6 +20,7 @@ public class RemoteTestNG {
     public static final String PROPERTY_DEBUG = "testng.eclipse.debug";
     public static final String PROPERTY_VERBOSE = "testng.eclipse.verbose";
     // End of Eclipse constants.
+    public static final String VERSION = "testng.version";
 
     private static boolean m_debug;
 
@@ -26,7 +29,9 @@ public class RemoteTestNG {
         RemoteArgs ra = new RemoteArgs();
         new JCommander(Arrays.asList(cla, ra), args);
 
-        IRemoteTestNG remoteTestNg = ServiceLoaderHelper.getFirst(ra.version).createRemoteTestNG();
+        Version testngVer = ra.version;
+        System.setProperty(VERSION, testngVer.toString());
+        IRemoteTestNG remoteTestNg = ServiceLoaderHelper.getFirst(testngVer).createRemoteTestNG();
         remoteTestNg.dontExit(ra.dontExit);
         if (cla.port != null && ra.serPort != null) {
             throw new TestNGException("Can only specify one of " + CommandLineArgs.PORT

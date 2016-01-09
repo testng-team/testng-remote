@@ -39,7 +39,6 @@ public class SuiteDispatcher
 	@Deprecated
 	public static final String MASTER_ADPATER = "testng.master.adpter";
 	public static final String MASTER_ADAPTER = "testng.master.adapter";
-    public static final String VERSION = "testng.version";
 
 	/**
 	 * Values allowed for STRATEGY
@@ -85,7 +84,7 @@ public class SuiteDispatcher
 			}
 			m_masterAdapter.init(properties);
 
-            String version = properties.getProperty(VERSION);
+            String version = properties.getProperty(RemoteTestNG.VERSION);
             adapter = ServiceLoaderHelper.getFirst(version == null ? null : new Version(version)).createSuiteDispatcherAdapter();
 		}
 		catch( Exception e)
