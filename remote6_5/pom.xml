@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>testng-remote6_5</artifactId>
-    <name>TestNG Remote for version [6.5.1, 6.8.1)</name>
+    <name>TestNG Remote for version [6.5.1, 6.9.7)</name>
 
     <properties>
         <testng.version>6.5.1</testng.version>
@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>org.testng</groupId>
-            <artifactId>testng-remote-common</artifactId>
+            <artifactId>testng-remote</artifactId>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
