@@ -8,23 +8,19 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>testng-remote</artifactId>
+    <artifactId>testng-remote-dist</artifactId>
     <name>TestNG Remote - Dist</name>
+    <description>TestNG Remote - Assemble All-in-One Package</description>
 
     <dependencies>
         <dependency>
             <groupId>org.testng</groupId>
-            <artifactId>testng-remote-common</artifactId>
+            <artifactId>testng-remote</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng-remote6_5</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng-remote6_8</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -54,9 +50,8 @@
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <artifactSet>
                                 <includes>
-                                    <include>org.testng:testng-remote-common</include>
+                                    <include>org.testng:testng-remote</include>
                                     <include>org.testng:testng-remote6_5</include>
-                                    <include>org.testng:testng-remote6_8</include>
                                     <include>org.testng:testng-remote6_9_7</include>
                                     <include>org.testng:testng-remote6_9_10</include>
                                 </includes>

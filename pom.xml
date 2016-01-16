@@ -8,10 +8,9 @@
     <name>Remote TestNG</name>
 
     <modules>
-        <module>common</module>
+        <module>remote</module>
         <module>remote6_9_10</module>
         <module>remote6_9_7</module>
-        <module>remote6_8</module>
         <module>remote6_5</module>
         <module>dist</module>
     </modules>
@@ -39,7 +38,7 @@
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
-                <artifactId>testng-remote-common</artifactId>
+                <artifactId>testng-remote</artifactId>
                 <version>${project.version}</version>
                 <exclusions>
                     <exclusion>
