@@ -3,7 +3,6 @@ package org.testng.remote;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-import org.osgi.framework.Version;
 import org.testng.CommandLineArgs;
 import org.testng.TestNGException;
 import org.testng.remote.support.ServiceLoaderHelper;
