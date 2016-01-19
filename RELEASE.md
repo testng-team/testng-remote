@@ -34,7 +34,7 @@ Release Remote TestNG
 One the release server, run the following maven command to release (tagging and upload to Bintray):
 ```bash
 REL_VER=1.0.0
-DEV_VER=1.0.0-SNAPSHOT
+DEV_VER=1.0.1-SNAPSHOT
 mvn -e --batch-mode release:prepare release:perform -DreleaseVersion=$REL_VER -DdevelopmentVersion=$DEV_VER
 ```
 
