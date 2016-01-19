@@ -72,38 +72,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -144,16 +112,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>release</releaseProfiles>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <distributionManagement>
