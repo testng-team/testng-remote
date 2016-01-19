@@ -3,6 +3,7 @@ package test.remote;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
+import org.testng.remote.RemoteArgs;
 import org.testng.remote.RemoteTestNG;
 import org.testng.remote.strprotocol.IMessage;
 import org.testng.remote.strprotocol.IMessageSender;
@@ -22,7 +23,10 @@ import java.util.List;
  *
  * @author Cedric Beust <cedric@beust.com>
  */
-public class RemoteTest extends SimpleBaseTest {
+public abstract class RemoteTest extends SimpleBaseTest {
+
+  protected abstract String getTestNGVersion();
+
   // Note: don't use the ports used by the plug-in or the RemoteTestNG processes
   // launched in this test will interfere with the plug-in.
   private static final int PORT1 = 1243;
@@ -54,7 +58,9 @@ public class RemoteTest extends SimpleBaseTest {
       @Override
       public void run() {
         RemoteTestNG.main(new String[] {
-            portArg, Integer.toString(portValue), "-dontexit",
+            portArg, Integer.toString(portValue), 
+            RemoteArgs.VERSION, getTestNGVersion(),
+            "-dontexit",
             getPathToResource("testng-remote.xml")
           });
         }
