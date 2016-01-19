@@ -12,7 +12,7 @@
     <name>TestNG Remote for version [6.9.7, 6.9.10)</name>
 
     <properties>
-        <testng.version>6.9.8</testng.version>
+        <testng.version>6.9.9</testng.version>
     </properties>
 
     <dependencies>
@@ -30,5 +30,24 @@
             <artifactId>auto-service</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng-remote</artifactId>
+            <type>test-jar</type>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <test.resources.dir>${basedir}/../remote/target/test-classes</test.resources.dir>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
