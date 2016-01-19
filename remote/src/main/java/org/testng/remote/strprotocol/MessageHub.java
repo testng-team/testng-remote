@@ -52,18 +52,10 @@ public class MessageHub {
       result = m_messageSender.receiveMessage();
       m_messageSender.sendAck();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return result;
   }
-
-  private static void p(String msg) {
-    if (RemoteTestNG.isVerbose()) {
-      System.out.println("[StringMessageSenderHelper] " + msg); //$NON-NLS-1$
-    }
-  }
-
 
   public void setDebug(boolean debug) {
     m_debug = debug;
