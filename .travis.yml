@@ -4,4 +4,4 @@ jdk:
   - oraclejdk7
   - openjdk7
 after_success:
-  - coveralls
+  - mvn -e clean test jacoco:report coveralls:report
