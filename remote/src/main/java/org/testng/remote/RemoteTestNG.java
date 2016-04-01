@@ -3,11 +3,19 @@ package org.testng.remote;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
+import org.osgi.framework.Version;
 import org.testng.CommandLineArgs;
 import org.testng.TestNGException;
 import org.testng.remote.support.ServiceLoaderHelper;
 
+import java.io.File;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 public class RemoteTestNG {
 
@@ -27,7 +35,63 @@ public class RemoteTestNG {
         RemoteArgs ra = new RemoteArgs();
         new JCommander(Arrays.asList(cla, ra), args);
 
-        IRemoteTestNG remoteTestNg = ServiceLoaderHelper.getFirst(ra.version).createRemoteTestNG();
+        Version ver = ra.version;
+        if (ver == null) {  // no version specified on cli, detect ourself
+          String strVer = null;
+          try {
+            // use reflection to read org.testng.internal.Version.VERSION for reason of:
+            // 1. bypass the javac compile time constant substitution
+            // 2. org.testng.internal.Version is available since version 6.6
+            @SuppressWarnings("rawtypes")
+            Class clazz = Class.forName("org.testng.internal.Version");
+            Field field = clazz.getDeclaredField("VERSION");
+            strVer = (String) field.get(null);
+
+            // trim the version to leave digital number only
+            int idx = strVer.indexOf("beta");
+            if (idx > 0) {
+              strVer = strVer.substring(0, idx);
+            }
+            ver = new Version(strVer);
+          } catch (Exception e) {
+            // testng version < 6.6, ClassNotFound: org.testng.internal.Version
+            // parse the MANIFEST.MF of testng jar from classpath
+            final ClassLoader cl = ClassLoader.getSystemClassLoader();
+            final URL[] urls = ((URLClassLoader) cl).getURLs();
+            for (final URL url : urls) {
+              File f = new File(url.getFile());
+              // only check jar file name starts with 'testng'
+              if (f.isFile() && f.getName().startsWith("testng")) {
+                try (JarFile jarFile = new JarFile(f)) {
+                  Manifest mf = jarFile.getManifest();
+                  Attributes mainAttrs = mf.getMainAttributes();
+                  if ("org.testng.TestNG".equals(mainAttrs.getValue("Main-Class"))) {
+                    ver = new Version(mainAttrs.getValue("Implementation-Version"));
+                    break;
+                  }
+
+                  if ("org.testng".equals(mainAttrs.getValue("Bundle-SymbolicName"))) {
+                    ver = new Version(mainAttrs.getValue("Bundle-Version"));
+                    break;
+                  }
+
+                  if ("testng".equals(mainAttrs.getValue("Specification-Title"))) {
+                    ver = new Version(mainAttrs.getValue("Specification-Version"));
+                    break;
+                  }
+                } catch (Exception ex) {
+                  ex.printStackTrace();
+                }
+              }
+            }
+            if (ver == null) {
+              p("No TestNG version found on classpath: " + join(urls, ", "));
+            }
+          }
+        }
+
+        p("detected TestNG version " + ver);
+        IRemoteTestNG remoteTestNg = ServiceLoaderHelper.getFirst(ver).createRemoteTestNG();
         remoteTestNg.dontExit(ra.dontExit);
         if (cla.port != null && ra.serPort != null) {
             throw new TestNGException("Can only specify one of " + CommandLineArgs.PORT
@@ -88,6 +152,15 @@ public class RemoteTestNG {
         if (isVerbose()) {
             System.out.println("[RemoteTestNG] " + s);
         }
+    }
+
+    private static String join(URL[] urls, String sep) {
+      StringBuilder sb = new StringBuilder();
+      for (URL url : urls) {
+        sb.append(url);
+        sb.append(sep);
+      }
+      return sb.toString();
     }
 
     public static boolean isVerbose() {
