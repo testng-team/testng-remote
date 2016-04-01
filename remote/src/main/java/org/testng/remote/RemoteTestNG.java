@@ -8,13 +8,11 @@ import org.testng.CommandLineArgs;
 import org.testng.TestNGException;
 import org.testng.remote.support.ServiceLoaderHelper;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class RemoteTestNG {
@@ -36,58 +34,9 @@ public class RemoteTestNG {
         new JCommander(Arrays.asList(cla, ra), args);
 
         Version ver = ra.version;
-        if (ver == null) {  // no version specified on cli, detect ourself
-          String strVer = null;
-          try {
-            // use reflection to read org.testng.internal.Version.VERSION for reason of:
-            // 1. bypass the javac compile time constant substitution
-            // 2. org.testng.internal.Version is available since version 6.6
-            @SuppressWarnings("rawtypes")
-            Class clazz = Class.forName("org.testng.internal.Version");
-            Field field = clazz.getDeclaredField("VERSION");
-            strVer = (String) field.get(null);
-
-            // trim the version to leave digital number only
-            int idx = strVer.indexOf("beta");
-            if (idx > 0) {
-              strVer = strVer.substring(0, idx);
-            }
-            ver = new Version(strVer);
-          } catch (Exception e) {
-            // testng version < 6.6, ClassNotFound: org.testng.internal.Version
-            // parse the MANIFEST.MF of testng jar from classpath
-            final ClassLoader cl = ClassLoader.getSystemClassLoader();
-            final URL[] urls = ((URLClassLoader) cl).getURLs();
-            for (final URL url : urls) {
-              File f = new File(url.getFile());
-              // only check jar file name starts with 'testng'
-              if (f.isFile() && f.getName().startsWith("testng")) {
-                try (JarFile jarFile = new JarFile(f)) {
-                  Manifest mf = jarFile.getManifest();
-                  Attributes mainAttrs = mf.getMainAttributes();
-                  if ("org.testng.TestNG".equals(mainAttrs.getValue("Main-Class"))) {
-                    ver = new Version(mainAttrs.getValue("Implementation-Version"));
-                    break;
-                  }
-
-                  if ("org.testng".equals(mainAttrs.getValue("Bundle-SymbolicName"))) {
-                    ver = new Version(mainAttrs.getValue("Bundle-Version"));
-                    break;
-                  }
-
-                  if ("testng".equals(mainAttrs.getValue("Specification-Title"))) {
-                    ver = new Version(mainAttrs.getValue("Specification-Version"));
-                    break;
-                  }
-                } catch (Exception ex) {
-                  ex.printStackTrace();
-                }
-              }
-            }
-            if (ver == null) {
-              p("No TestNG version found on classpath: " + join(urls, ", "));
-            }
-          }
+        if (ver == null) {
+          // no version specified on cli, detect ourself
+          ver = getTestNGVersion();
         }
 
         p("detected TestNG version " + ver);
@@ -108,6 +57,56 @@ public class RemoteTestNG {
         else {
             initAndRun(remoteTestNg, args, cla, ra);
         }
+    }
+
+    private static Version getTestNGVersion() {
+      try {
+        // use reflection to read org.testng.internal.Version.VERSION for reason of:
+        // 1. bypass the javac compile time constant substitution
+        // 2. org.testng.internal.Version is available since version 6.6
+        @SuppressWarnings("rawtypes")
+        Class clazz = Class.forName("org.testng.internal.Version");
+        Field field = clazz.getDeclaredField("VERSION");
+        String strVer = (String) field.get(null);
+
+        // trim the version to leave digital number only
+        int idx = strVer.indexOf("beta");
+        if (idx > 0) {
+          strVer = strVer.substring(0, idx);
+        }
+        return new Version(strVer);
+      } catch (Exception e) {
+        // testng version < 6.6, ClassNotFound: org.testng.internal.Version
+        // parse the MANIFEST.MF of testng jar from classpath
+        try {
+          Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources("META-INF/MANIFEST.MF");
+          while (resources.hasMoreElements()) {
+            Manifest mf = new Manifest(resources.nextElement().openStream());
+            Attributes mainAttrs = mf.getMainAttributes();
+            if ("org.testng.TestNG".equals(mainAttrs.getValue("Main-Class"))) {
+              return new Version(mainAttrs.getValue("Implementation-Version"));
+            }
+
+            if ("org.testng".equals(mainAttrs.getValue("Bundle-SymbolicName"))) {
+              return new Version(mainAttrs.getValue("Bundle-Version"));
+            }
+
+            if ("testng".equals(mainAttrs.getValue("Specification-Title"))) {
+              return new Version(mainAttrs.getValue("Specification-Version"));
+            }
+          }
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      }
+
+      p("No TestNG version found on classpath");
+      ClassLoader cl = ClassLoader.getSystemClassLoader();
+      if (cl instanceof URLClassLoader) {
+        p(join(((URLClassLoader) cl).getURLs(), ", "));
+      }
+
+      return null;
     }
 
     private static void initAndRun(IRemoteTestNG remoteTestNg, String[] args, CommandLineArgs cla, RemoteArgs ra) {
