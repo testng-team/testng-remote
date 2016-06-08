@@ -60,6 +60,7 @@ public class RemoteTestNG {
     }
 
     private static Version getTestNGVersion() {
+      String errMsg = "";
       try {
         // use reflection to read org.testng.internal.Version.VERSION for reason of:
         // 1. bypass the javac compile time constant substitution
@@ -96,7 +97,10 @@ public class RemoteTestNG {
             }
           }
         } catch (Exception ex) {
-          ex.printStackTrace();
+          errMsg = ex.getMessage();
+          if (isDebug()) {
+            ex.printStackTrace();
+          }
         }
       }
 
@@ -106,7 +110,7 @@ public class RemoteTestNG {
         p(join(((URLClassLoader) cl).getURLs(), ", "));
       }
 
-      return null;
+      throw new RuntimeException("Can't recognize the TestNG version on classpath. " + errMsg);
     }
 
     private static void initAndRun(IRemoteTestNG remoteTestNg, String[] args, CommandLineArgs cla, RemoteArgs ra) {
