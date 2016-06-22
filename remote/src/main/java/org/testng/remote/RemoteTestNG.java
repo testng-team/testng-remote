@@ -75,8 +75,17 @@ public class RemoteTestNG {
         if (idx > 0) {
           strVer = strVer.substring(0, idx);
         }
+        idx = strVer.indexOf("-SNAPSHOT");
+        if (idx > 0) {
+          strVer = strVer.substring(0, idx);
+        }
+
         return new Version(strVer);
       } catch (Exception e) {
+        if (isDebug()) {
+          e.printStackTrace();
+        }
+
         // testng version < 6.6, ClassNotFound: org.testng.internal.Version
         // parse the MANIFEST.MF of testng jar from classpath
         try {
