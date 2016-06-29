@@ -59,8 +59,13 @@ public class RemoteTestNG {
         }
     }
 
+    /**
+     * Get the version of TestNG on classpath.
+     * 
+     * @return the Version of TestNG
+     * @throws RuntimeException if can't recognize the TestNG version on classpath. 
+     */
     private static Version getTestNGVersion() {
-      String errMsg = "";
       try {
         // use reflection to read org.testng.internal.Version.VERSION for reason of:
         // 1. bypass the javac compile time constant substitution
@@ -106,7 +111,6 @@ public class RemoteTestNG {
             }
           }
         } catch (Exception ex) {
-          errMsg = ex.getMessage();
           if (isDebug()) {
             ex.printStackTrace();
           }
@@ -114,12 +118,15 @@ public class RemoteTestNG {
       }
 
       p("No TestNG version found on classpath");
-      ClassLoader cl = ClassLoader.getSystemClassLoader();
-      if (cl instanceof URLClassLoader) {
-        p(join(((URLClassLoader) cl).getURLs(), ", "));
+      if (isDebug()) {
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        if (cl instanceof URLClassLoader) {
+          p(join(((URLClassLoader) cl).getURLs(), ", "));
+        }
       }
 
-      throw new RuntimeException("Can't recognize the TestNG version on classpath. " + errMsg);
+      throw new RuntimeException("Can't recognize the TestNG version on classpath."
+          + " Please make sure that there's a supported TestNG version (aka. >= 6.5.1) on your project.");
     }
 
     private static void initAndRun(IRemoteTestNG remoteTestNg, String[] args, CommandLineArgs cla, RemoteArgs ra) {
