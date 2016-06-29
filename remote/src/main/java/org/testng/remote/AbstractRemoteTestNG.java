@@ -150,6 +150,8 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
         return new StringMessageSender(m_host, m_port);
       case "json":
         return new JsonMessageSender(m_host, m_serPort, m_ack);
+      case "stdout":
+        return new StdoutMessageSender();
       default:
         throw new IllegalArgumentException("unrecognized protocol: " + m_protocol);
       }
