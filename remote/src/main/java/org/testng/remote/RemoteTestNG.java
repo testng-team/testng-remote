@@ -8,12 +8,11 @@ import org.testng.CommandLineArgs;
 import org.testng.TestNGException;
 import org.testng.remote.support.ServiceLoaderHelper;
 
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 public class RemoteTestNG {
 
@@ -91,24 +90,17 @@ public class RemoteTestNG {
           e.printStackTrace();
         }
 
-        // testng version < 6.6, ClassNotFound: org.testng.internal.Version
-        // parse the MANIFEST.MF of testng jar from classpath
+        // for testng version < 6.6, since ClassNotFound: org.testng.internal.Version, 
+        // parse the version from 'META-INF/maven/org.testng/testng/pom.properties' of testng jar on classpath
         try {
-          Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources("META-INF/MANIFEST.MF");
+          Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(
+              "META-INF/maven/org.testng/testng/pom.properties");
           while (resources.hasMoreElements()) {
-            Manifest mf = new Manifest(resources.nextElement().openStream());
-            Attributes mainAttrs = mf.getMainAttributes();
-            if ("org.testng.TestNG".equals(mainAttrs.getValue("Main-Class"))) {
-              return new Version(mainAttrs.getValue("Implementation-Version"));
+            Properties props = new Properties();
+            try (InputStream in = resources.nextElement().openStream()) {
+              props.load(in);
             }
-
-            if ("org.testng".equals(mainAttrs.getValue("Bundle-SymbolicName"))) {
-              return new Version(mainAttrs.getValue("Bundle-Version"));
-            }
-
-            if ("testng".equals(mainAttrs.getValue("Specification-Title"))) {
-              return new Version(mainAttrs.getValue("Specification-Version"));
-            }
+            return new Version(props.getProperty("version"));
           }
         } catch (Exception ex) {
           if (isDebug()) {
