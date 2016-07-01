@@ -26,7 +26,7 @@
                 </executions>
                 <configuration>
                     <scripts>
-                        <script>file:///${project.basedir}/src/main/groovy/Tester.groovy</script>
+                        <script>file:///${project.basedir}/src/test/groovy/Tester.groovy</script>
                     </scripts>
                 </configuration>
                 <dependencies>

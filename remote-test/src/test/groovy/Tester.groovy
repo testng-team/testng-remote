@@ -38,11 +38,14 @@ def runTestNGTest(ver) {
     def classifierVer = new Version("5.11")
 
     def workingDir = new File(System.getProperty("user.dir"))
-    def scriptDir = new File(workingDir.absolutePath + "/src/main/groovy")
+    def scriptDir = new File(workingDir.absolutePath + "/src/test/groovy")
 
     def grabScriptFile = new File(scriptDir, "grabJar_${ver}.groovy")
 
     // start a new process to download the dep jars
+    // since @Grad can't specify the order of the jars on the classpath
+    // while we do want to make testng-remote on front of testng jar
+    // that's why we not put this in the TestNGTest.groovy
     grabScriptFile.withWriter { w ->
         new File(scriptDir, "grabJar.groovy").eachLine { line ->
             if (line.contains("@Grab(group = 'org.testng', module = 'testng', version = '6.9.11')")) {
