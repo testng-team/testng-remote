@@ -37,9 +37,8 @@ def runTestNGTest(ver) {
     // need to download the classifier jar for versions <= 5.11
     def classifierVer = new Version("5.11")
 
-
-    def scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
-    def workingDir = new File(scriptDir + "/../../../")
+    def workingDir = new File(System.getProperty("user.dir"))
+    def scriptDir = new File(workingDir.absolutePath + "/src/main/groovy")
 
     def grabScriptFile = new File(scriptDir, "grabJar_${ver}.groovy")
 
