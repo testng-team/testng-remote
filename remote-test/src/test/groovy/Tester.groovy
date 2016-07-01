@@ -92,6 +92,9 @@ def runTestNGTest(ver) {
     def grapeRepoDir = System.getenv("HOME") + "/.groovy/grapes"
     def remoteTestngJar = "${grapeRepoDir}/org.testng/testng-remote-dist/jars/testng-remote-dist-1.0.0-SNAPSHOT-shaded.jar"
     def testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}.jar"
+    if (version.compareTo(classifierVer) <= 0) {
+        testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}-jdk15.jar"
+    }
     def jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-1.48.jar"
 
 
