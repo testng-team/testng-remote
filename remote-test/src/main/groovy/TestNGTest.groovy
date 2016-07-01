@@ -1,24 +1,19 @@
-@GrabResolver(name = 'jcenter', root = 'http://jcenter.bintray.com/')
-@Grab(group = 'org.testng', module = 'testng', version = '6.9.11')
-//@Grab(group = 'com.beust', module = 'jcommander', version = '1.48')
-@Grab(group = 'org.testng', module = 'testng-remote-dist', version = '1.0.0-SNAPSHOT', classifier = 'shaded')
-
 import org.testng.remote.RemoteTestNG;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.AfterClass;
+//import org.testng.annotations.BeforeClass;
+//import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 class SimpleTest {
 
-    @BeforeClass
-    def setUp() {
-        println "BeforeClass: setUp"
-    }
-
-    @AfterClass
-    def tearDown() {
-        println "AfterClass: tearDown"
-    }
+//    @BeforeClass
+//    def setUp() {
+//        println "BeforeClass: setUp"
+//    }
+//
+//    @AfterClass
+//    def tearDown() {
+//        println "AfterClass: tearDown"
+//    }
 
     @Test
     void testFoo() {
