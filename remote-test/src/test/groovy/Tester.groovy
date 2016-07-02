@@ -2,9 +2,34 @@
 
 import org.osgi.framework.Version
 
-def metadata = new XmlSlurper().parse("https://bintray.com/cbeust/maven/download_file?file_path=org%2Ftestng%2Ftestng%2Fmaven-metadata.xml")
+//
+// global var
+//
+// need to download the classifier jar for versions <= 5.11
+classifierVer = new Version("5.11")
+
+// TODO get the version properties passed by maven via system properties to be consistent with pom.xml
+groovyVer = "2.3.11"
+ivyVer = "2.3.0"
+
+workingDir = new File(System.getProperty("user.dir"))
+scriptDir = new File(workingDir.absolutePath + "/src/test/groovy")
+
+mvnRepoDir = System.getenv("HOME") + "/.m2/repository"
+
+groovyJar = "${mvnRepoDir}/org/codehaus/groovy/groovy-all/${groovyVer}/groovy-all-${groovyVer}.jar"
+// ivy is required for groovy @Grab annotation
+ivyJar = "${mvnRepoDir}/org/apache/ivy/ivy/${ivyVer}/ivy-${ivyVer}.jar"
+
+grapeRepoDir = System.getenv("HOME") + "/.groovy/grapes"
+
+remoteTestngJar = "${grapeRepoDir}/org.testng/testng-remote-dist/jars/testng-remote-dist-1.0.0-SNAPSHOT-shaded.jar"
+jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-1.48.jar"
+
+resultSet = new HashMap<Integer, Set>()
 
 def startTime = System.currentTimeMillis()
+def metadata = new XmlSlurper().parse("https://bintray.com/cbeust/maven/download_file?file_path=org%2Ftestng%2Ftestng%2Fmaven-metadata.xml")
 
 metadata.versioning.versions.version.each { version ->
     println ">>>>>"
@@ -12,44 +37,104 @@ metadata.versioning.versions.version.each { version ->
     println ">>>>>"
 
     def exitValue = runTestNGTest(version)
+    def rset = resultSet[exitValue]
+    if (rset == null) {
+        rset = new ArrayList()
+        resultSet[exitValue] = rset
+    }
+    rset << version
 
     println "<<<<<"
-    if (exitValue != 0) {
-        def ver = toVersion(version.toString())
-        def minVer = new Version("6.5.1")
-
-        if (ver.compareTo(minVer) >= 0) {
-            println "!!!!! Test FAILED with version: ${version}, BUT IT SHOULD BE PASSED !!!!!"
-        } else {
-            println "!!!!! Test FAILED with version: ${version}"
-        }
-    } else {
-        println "!!!!! Test PASSED with version: ${version}"
-    }
+    println ">>>>> Tested ${version}: result=${exitValue}"
     println "<<<<<\n"
 }
 
 println "\nCompleted in " + (System.currentTimeMillis() - startTime) + " (ms)"
 
+resultSet.each {
+    switch (it.key) {
+        case 0:
+            println it.key + " - PASSED:"
+            break;
+        case 1:
+            println it.key + " - unsupported version detected:"
+            break;
+        case 2:
+            println it.key + " - NoClassDefFoundError:"
+            break;
+        default:
+            println it.key + " - OTHERS:"
+    }
+
+    println "\t" + it.value
+}
+
+/**
+ * run the testng test with groovy in a separate process
+ *
+ * @param ver the testng version
+ * @return 0 - success; 1 - unsupported version detected; 2 - NoClassDefFoundError; -1 - others;
+ */
 def runTestNGTest(ver) {
+    if (downloadTestNG(ver) != 0) {
+        println "failed to download jars for ${ver}, skip testing"
+        return -1
+    }
 
-    def version = toVersion(ver.toString())
-    // need to download the classifier jar for versions <= 5.11
-    def classifierVer = new Version("5.11")
+    def testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}.jar"
+    if (toVersion(ver.toString()).compareTo(classifierVer) <= 0) {
+        testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}-jdk15.jar"
+    }
 
-    def workingDir = new File(System.getProperty("user.dir"))
-    def scriptDir = new File(workingDir.absolutePath + "/src/test/groovy")
+    println "classpath: ${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}\n"
 
+    def scriptFile = new File(scriptDir, "TestNGTest.groovy")
+    // run the groovy script via Java executable rather than groovy executable, because:
+    //      1) groovy has RootLoader loads groovy distributed testng jar, which is in prior to our own jar;
+    //      2) groovy @Grad can't specify the order of the jar on the classpath,
+    //          while testng-remote need to be on front of testng
+    //          (since some older version of testng jar contains older version of RemoteTestNG)
+    def output = new StringBuilder()
+    def process = new ProcessBuilder(
+            "java",
+            "-classpath", "${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}",
+//            "-Dtestng.eclipse.verbose",
+//            "-Dtestng.eclipse.debug",
+            "groovy.ui.GroovyMain",
+            scriptFile.absolutePath)
+            .directory(workingDir).redirectErrorStream(true).start()
+    process.inputStream.eachLine { println it; output << it.toString() }
+    process.waitFor();
+    def exitValue = process.exitValue()
+    if (exitValue == 0) {
+        return 0
+    } else {
+        if (output.contains("is not a supported TestNG version")) {
+            return 1
+        } else if (output.contains("java.lang.NoClassDefFoundError")) {
+            return 2;
+        } else {
+            return -1
+        }
+    }
+}
+
+/**
+ * start a new process to download the dep jars,
+ * since @Grad can't specify the order of the jars on the classpath
+ * while we do want to make testng-remote on front of testng jar
+ * that's why we not put @Grab in the TestNGTest.groovy
+ *
+ * @param ver the testng version
+ * @return 0 - success, otherwise - failure
+ */
+def downloadTestNG(ver) {
     def grabScriptFile = new File(scriptDir, "grabJar_${ver}.groovy")
 
-    // start a new process to download the dep jars
-    // since @Grad can't specify the order of the jars on the classpath
-    // while we do want to make testng-remote on front of testng jar
-    // that's why we not put this in the TestNGTest.groovy
     grabScriptFile.withWriter { w ->
         new File(scriptDir, "grabJar.groovy").eachLine { line ->
             if (line.contains("@Grab(group = 'org.testng', module = 'testng', version = '6.9.11')")) {
-                if (version.compareTo(classifierVer) > 0) {
+                if (toVersion(ver.toString()).compareTo(classifierVer) > 0) {
                     w << "@Grab(group = 'org.testng', module = 'testng', version = '${ver}')" + "\n"
                 } else {
                     w << "@Grab(group = 'org.testng', module = 'testng', version = '${ver}', classifier = 'jdk15')" + "\n"
@@ -60,16 +145,6 @@ def runTestNGTest(ver) {
         }
     }
 
-    // TODO get the version properties passed by maven via system properties
-    def groovyVer = "2.3.11"
-    def ivyVer = "2.3.0"
-    def mvnRepoDir = System.getenv("HOME") + "/.m2/repository"
-
-    def groovyJar = "${mvnRepoDir}/org/codehaus/groovy/groovy-all/${groovyVer}/groovy-all-${groovyVer}.jar"
-    // ivy is used for groovy @Grab annotation
-    def ivyJar = "${mvnRepoDir}/org/apache/ivy/ivy/${ivyVer}/ivy-${ivyVer}.jar"
-
-    def downloaded = 1  // default as false
     try {
         def grapeProc = new ProcessBuilder(
                 "java",
@@ -79,46 +154,13 @@ def runTestNGTest(ver) {
                 .directory(workingDir).redirectErrorStream(true).start()
         grapeProc.inputStream.eachLine { println it }
         grapeProc.waitFor();
-        downloaded = grapeProc.exitValue()
+        return grapeProc.exitValue()
     } finally {
         grabScriptFile.delete()
     }
-
-    if (downloaded != 0) {
-        println "failed to download jars for ${ver}, skip testing"
-        return -1
-    }
-
-    def grapeRepoDir = System.getenv("HOME") + "/.groovy/grapes"
-    def remoteTestngJar = "${grapeRepoDir}/org.testng/testng-remote-dist/jars/testng-remote-dist-1.0.0-SNAPSHOT-shaded.jar"
-    def testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}.jar"
-    if (version.compareTo(classifierVer) <= 0) {
-        testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}-jdk15.jar"
-    }
-    def jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-1.48.jar"
-
-
-    println "classpath: ${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}\n"
-    def scriptFile = new File(scriptDir, "TestNGTest.groovy")
-    // run the groovy script via Java executable rather than groovy executable, because:
-    //      1) groovy has RootLoader loads groovy distributed testng jar, which is in prior to our own jar;
-    //      2) groovy @Grad can't specify the order of the jar on the classpath,
-    //          while testng-remote need to be on front of testng
-    //          (since some older version of testng jar contains older version of RemoteTestNG)
-    def process = new ProcessBuilder(
-            "java",
-            "-classpath", "${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}",
-//            "-Dtestng.eclipse.verbose",
-//            "-Dtestng.eclipse.debug",
-            "groovy.ui.GroovyMain",
-            scriptFile.absolutePath)
-            .directory(workingDir).redirectErrorStream(true).start()
-    process.inputStream.eachLine { println it }
-    process.waitFor();
-    return process.exitValue()
 }
 
-def toVersion(ver) {
+def Version toVersion(String ver) {
     if ("5.5.m".equals(ver)) {
         ver = "5.5"
     }
