@@ -92,8 +92,12 @@ public class RemoteTestNG {
 
         // for testng version < 6.6, since ClassNotFound: org.testng.internal.Version, 
         // parse the version from 'META-INF/maven/org.testng/testng/pom.properties' of testng jar on classpath
+
+        // assume this is the same classLoader loading the TestNG classes
+        ClassLoader cl = RemoteTestNG.class.getClassLoader();
+
         try {
-          Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(
+          Enumeration<URL> resources = cl.getResources(
               "META-INF/maven/org.testng/testng/pom.properties");
           while (resources.hasMoreElements()) {
             Properties props = new Properties();
@@ -107,13 +111,12 @@ public class RemoteTestNG {
             ex.printStackTrace();
           }
         }
-      }
 
-      p("No TestNG version found on classpath");
-      if (isDebug()) {
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        if (cl instanceof URLClassLoader) {
-          p(join(((URLClassLoader) cl).getURLs(), ", "));
+        p("No TestNG version found on classpath");
+        if (isDebug()) {
+          if (cl instanceof URLClassLoader) {
+            p(join(((URLClassLoader) cl).getURLs(), ", "));
+          }
         }
       }
 

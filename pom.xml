@@ -20,6 +20,7 @@
         <module>remote6_9_7</module>
         <module>remote6_5</module>
         <module>dist</module>
+        <module>remote-test</module>
     </modules>
 
     <properties>
