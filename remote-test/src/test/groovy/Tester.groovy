@@ -5,6 +5,7 @@ import org.osgi.framework.Version
 //
 // global var
 //
+
 // need to download the classifier jar for versions <= 5.11
 classifierVer = new Version("5.11")
 
@@ -13,6 +14,13 @@ groovyVer = "2.3.11"
 ivyVer = "2.3.0"
 
 workingDir = new File(System.getProperty("user.dir"))
+
+// workaround for running mvn from project root
+def f = new File(workingDir, "remote-test")
+if (f.exists()) {
+    workingDir = f
+}
+
 scriptDir = new File(workingDir.absolutePath + "/src/test/groovy")
 
 mvnRepoDir = System.getenv("HOME") + "/.m2/repository"
@@ -51,6 +59,7 @@ metadata.versioning.versions.version.each { version ->
 
 println "\nCompleted in " + (System.currentTimeMillis() - startTime) + " (ms)"
 
+// print the summary report
 resultSet.each {
     switch (it.key) {
         case 0:
@@ -68,6 +77,22 @@ resultSet.each {
 
     println "\t" + it.value
 }
+
+
+// failed if there's any OTHER failures
+assert resultSet[-1] == null
+
+def minVer = new Version("6.5.1")
+resultSet[1].each {
+    // no version >= 6.5.1 will get error 'unsupported version detected'
+    assert (toVersion(it.toString()).compareTo(minVer) < 0)
+}
+resultSet[2].each {
+    // no version >= 6.5.1 will get error 'NoClassDefFoundError'
+    assert (toVersion(it.toString()).compareTo(minVer) < 0)
+}
+
+
 
 /**
  * run the testng test with groovy in a separate process
