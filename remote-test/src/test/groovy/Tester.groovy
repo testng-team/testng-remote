@@ -61,8 +61,8 @@ def runTestNGTest(ver) {
     }
 
     // TODO get the version properties passed by maven via system properties
-    def groovyVer = "2.4.7"
-    def ivyVer = "2.4.0"
+    def groovyVer = "2.3.11"
+    def ivyVer = "2.3.0"
     def mvnRepoDir = System.getenv("HOME") + "/.m2/repository"
 
     def groovyJar = "${mvnRepoDir}/org/codehaus/groovy/groovy-all/${groovyVer}/groovy-all-${groovyVer}.jar"
@@ -98,6 +98,7 @@ def runTestNGTest(ver) {
     def jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-1.48.jar"
 
 
+    println "classpath: ${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}\n"
     def scriptFile = new File(scriptDir, "TestNGTest.groovy")
     // run the groovy script via Java executable rather than groovy executable, because:
     //      1) groovy has RootLoader loads groovy distributed testng jar, which is in prior to our own jar;

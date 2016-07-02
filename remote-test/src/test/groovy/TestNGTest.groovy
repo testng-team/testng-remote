@@ -24,16 +24,17 @@ class SimpleTest {
 def DEBUG = false
 
 if (DEBUG) {
-    println "root loader:"
-    this.class.classLoader.rootLoader.URLs.each { println it }
+    println "===== Classpath BEGIN ====="
+//    println "root loader:"
+//    this.class.classLoader.rootLoader.URLs.each { println it }
 
     println "\nsystem loader:"
     ClassLoader.systemClassLoader.URLs.each { println it }
 
-    println "\nsub loader"
+    println "\ncurrent thread loader"
     this.class.classLoader.URLs.each { println it }
 
-    println "\n"
+    println "\n===== Classpath END =====\n"
 }
 
 def args = ["-serport", "61497", "-protocol", "stdout", "-d", "./testng-output", "./src/test/resources/testng-remote.xml"] as String[]
