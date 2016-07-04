@@ -31,7 +31,7 @@ ivyJar = "${mvnRepoDir}/org/apache/ivy/ivy/${ivyVer}/ivy-${ivyVer}.jar"
 
 grapeRepoDir = System.getenv("HOME") + "/.groovy/grapes"
 
-remoteTestngJar = "${grapeRepoDir}/org.testng/testng-remote-dist/jars/testng-remote-dist-1.0.0-SNAPSHOT-shaded.jar"
+remoteTestngJar = "${grapeRepoDir}/org.testng.testng-remote/testng-remote-dist/jars/testng-remote-dist-1.0.0-SNAPSHOT-shaded.jar"
 jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-1.48.jar"
 
 resultSet = new HashMap<Integer, Set>()
