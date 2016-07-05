@@ -14,72 +14,85 @@
     <properties>
         <groovy.version>2.3.11</groovy.version>
         <ivy.version>2.3.0</ivy.version>
+        <skipIntTest>true</skipIntTest>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.5.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <phase>test</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-DPROJECT_BASEDIR=${project.basedir}</argument>
-                        <argument>-DPROJECT_VERSION=${project.version}</argument>
-                        <argument>-DGROOVY_VERSION=${groovy.version}</argument>
-                        <argument>-DIVY_VERSION=${ivy.version}</argument>
-                        <argument>-classpath</argument>
-                        <classpath>
-                            <dependency>org.codehaus.groovy:groovy-all</dependency>
-                            <dependency>org.apache.ivy:ivy</dependency>
-                        </classpath>
-                        <argument>groovy.ui.GroovyMain</argument>
-                        <argument>${project.basedir}/src/test/groovy/Tester.groovy</argument>
-                    </arguments>
-                </configuration>
-                <dependencies>
-                    <!-- the groovy and ivy dependency are used by exec-maven-plugin -->
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <!-- any version of Groovy \>= 1.5.0 should work here -->
-                        <version>${groovy.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.ivy</groupId>
-                        <artifactId>ivy</artifactId>
-                        <version>${ivy.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>integration-tests</id>
+            <activation>
+                <property>
+                    <name>skipIntTest</name>
+                    <value>false</value>
+                </property>
+            </activation>
 
-    <dependencies>
-        <!-- the groovy and ivy dependency are used by exec-maven-plugin -->
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <!-- any version of Groovy \>= 1.5.0 should work here -->
-            <version>${groovy.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ivy</groupId>
-            <artifactId>ivy</artifactId>
-            <version>${ivy.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-    </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-DPROJECT_BASEDIR=${project.basedir}</argument>
+                                <argument>-DPROJECT_VERSION=${project.version}</argument>
+                                <argument>-DGROOVY_VERSION=${groovy.version}</argument>
+                                <argument>-DIVY_VERSION=${ivy.version}</argument>
+                                <argument>-classpath</argument>
+                                <classpath>
+                                    <dependency>org.codehaus.groovy:groovy-all</dependency>
+                                    <dependency>org.apache.ivy:ivy</dependency>
+                                </classpath>
+                                <argument>groovy.ui.GroovyMain</argument>
+                                <argument>${project.basedir}/src/test/groovy/Tester.groovy</argument>
+                            </arguments>
+                        </configuration>
+                        <dependencies>
+                            <!-- the groovy and ivy dependency are used by exec-maven-plugin -->
+                            <dependency>
+                                <groupId>org.codehaus.groovy</groupId>
+                                <artifactId>groovy-all</artifactId>
+                                <!-- any version of Groovy \>= 1.5.0 should work here -->
+                                <version>${groovy.version}</version>
+                                <scope>runtime</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ivy</groupId>
+                                <artifactId>ivy</artifactId>
+                                <version>${ivy.version}</version>
+                                <scope>runtime</scope>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <dependencies>
+                <!-- the groovy and ivy dependency are used by exec-maven-plugin -->
+                <dependency>
+                    <groupId>org.codehaus.groovy</groupId>
+                    <artifactId>groovy-all</artifactId>
+                    <!-- any version of Groovy \>= 1.5.0 should work here -->
+                    <version>${groovy.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.ivy</groupId>
+                    <artifactId>ivy</artifactId>
+                    <version>${ivy.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
