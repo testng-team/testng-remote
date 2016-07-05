@@ -16,22 +16,18 @@
         <dependency>
             <groupId>org.testng.testng-remote</groupId>
             <artifactId>testng-remote</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng.testng-remote</groupId>
             <artifactId>testng-remote6_5</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng.testng-remote</groupId>
             <artifactId>testng-remote6_9_7</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng.testng-remote</groupId>
             <artifactId>testng-remote6_9_10</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
