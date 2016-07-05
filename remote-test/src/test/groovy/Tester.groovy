@@ -16,11 +16,25 @@ testngRemoteVer = "1.0.0-SNAPSHOT"
 
 workingDir = new File(System.getProperty("user.dir"))
 
-// workaround for running mvn from project root
-def f = new File(workingDir, "remote-test")
-if (f.exists()) {
-    workingDir = f
+if (System.getProperty("PROJECT_VERSION")) {
+    testngRemoteVer = System.getProperty("PROJECT_VERSION")
 }
+if (System.getProperty("PROJECT_BASEDIR")) {
+    workingDir = new File(System.getProperty("PROJECT_BASEDIR"))
+}
+if (System.getProperty("GROOVY_VERSION")) {
+    groovyVer = System.getProperty("GROOVY_VERSION")
+}
+if (System.getProperty("IVY_VERSION")) {
+    ivyVer = System.getProperty("IVY_VERSION");
+}
+
+println "\t:::"
+println "\t::: workingDir: ${workingDir}"
+println "\t::: testng remote version: ${testngRemoteVer}"
+println "\t::: groovy version: ${groovyVer}"
+println "\t::: ivy version: ${ivyVer}"
+println "\t:::"
 
 scriptDir = new File(workingDir.absolutePath + "/src/test/groovy")
 
