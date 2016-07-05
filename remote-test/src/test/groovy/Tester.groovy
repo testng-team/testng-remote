@@ -12,6 +12,7 @@ classifierVer = new Version("5.11")
 // TODO get the version properties passed by maven via system properties to be consistent with pom.xml
 groovyVer = "2.3.11"
 ivyVer = "2.3.0"
+testngRemoteVer = "1.0.0-SNAPSHOT"
 
 workingDir = new File(System.getProperty("user.dir"))
 
@@ -31,10 +32,13 @@ ivyJar = "${mvnRepoDir}/org/apache/ivy/ivy/${ivyVer}/ivy-${ivyVer}.jar"
 
 grapeRepoDir = System.getenv("HOME") + "/.groovy/grapes"
 
-remoteTestngJar = "${grapeRepoDir}/org.testng.testng-remote/testng-remote-dist/jars/testng-remote-dist-1.0.0-SNAPSHOT-shaded.jar"
+remoteTestngJar = "${grapeRepoDir}/org.testng.testng-remote/testng-remote-dist/jars/testng-remote-dist-${testngRemoteVer}-shaded.jar"
 jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-1.48.jar"
 
 resultSet = new HashMap<Integer, Set>()
+
+//~~
+
 
 def startTime = System.currentTimeMillis()
 def metadata = new XmlSlurper().parse("https://bintray.com/cbeust/maven/download_file?file_path=org%2Ftestng%2Ftestng%2Fmaven-metadata.xml")
@@ -59,7 +63,8 @@ metadata.versioning.versions.version.each { version ->
 
 println "\nCompleted in " + (System.currentTimeMillis() - startTime) + " (ms)"
 
-// print the summary report
+
+println "\nSummary report:"
 resultSet.each {
     switch (it.key) {
         case 0:
@@ -77,7 +82,7 @@ resultSet.each {
 
     println "\t" + it.value
 }
-
+println ""
 
 // failed if there's any OTHER failures
 assert resultSet[-1] == null
@@ -91,8 +96,6 @@ resultSet[2].each {
     // no version >= 6.5.1 will get error 'NoClassDefFoundError'
     assert (toVersion(it.toString()).compareTo(minVer) < 0)
 }
-
-
 
 /**
  * run the testng test with groovy in a separate process
@@ -157,17 +160,18 @@ def downloadTestNG(ver) {
     def grabScriptFile = new File(scriptDir, "grabJar_${ver}.groovy")
 
     grabScriptFile.withWriter { w ->
-        new File(scriptDir, "grabJar.groovy").eachLine { line ->
-            if (line.contains("@Grab(group = 'org.testng', module = 'testng', version = '6.9.11')")) {
-                if (toVersion(ver.toString()).compareTo(classifierVer) > 0) {
-                    w << "@Grab(group = 'org.testng', module = 'testng', version = '${ver}')" + "\n"
-                } else {
-                    w << "@Grab(group = 'org.testng', module = 'testng', version = '${ver}', classifier = 'jdk15')" + "\n"
-                }
-            } else {
-                w << line + "\n"
-            }
+        w << "@GrabResolver(name = 'jcenter', root = 'http://jcenter.bintray.com/')" + "\n"
+
+        if (toVersion(ver.toString()).compareTo(classifierVer) > 0) {
+            w << "@Grab(group = 'org.testng', module = 'testng', version = '${ver}')" + "\n"
+        } else {
+            w << "@Grab(group = 'org.testng', module = 'testng', version = '${ver}', classifier = 'jdk15')" + "\n"
         }
+
+        w << "@Grab(group = 'com.beust', module = 'jcommander', version = '1.48')" + "\n"
+        w << "@Grab(group = 'org.testng.testng-remote', module = 'testng-remote-dist', version = '${testngRemoteVer}', classifier = 'shaded')" + "\n"
+
+        w << "import org.testng.annotations.Test;" + "\n"
     }
 
     try {
