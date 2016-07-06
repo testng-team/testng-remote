@@ -19,7 +19,7 @@ However, we still want to have a view of how will testng-remote behave against t
 
 ```bash
 cd testng-remote/remote-test
-mvn -e gplus:execute
+mvn -e -DskipIntTest=false test
 ```
 
 ## Trouble shooting
