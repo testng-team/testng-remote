@@ -49,7 +49,7 @@ public class JsonMessageSender extends BaseMessageSender {
 
     int messageType = getMessageType(message);
     if (messageType < 0) {
-      throw new IOException("Unknown type: " + messageType + " of message: " + messageType);
+      throw new IOException("Unknown type for message: " + message);
     }
     writer.name("type").value(messageType);
     writer.name("data");
@@ -69,7 +69,7 @@ public class JsonMessageSender extends BaseMessageSender {
     } else if (message instanceof TestResultMessage) {
       return MessageHelper.TEST_RESULT;
     }
-    // unknow message type
+    // unknown message type
     return -1;
   }
 
@@ -133,7 +133,7 @@ public class JsonMessageSender extends BaseMessageSender {
         message = gson.fromJson(reader, TestResultMessage.class);
         break;
       default:
-        throw new IOException("unknown message type, raw json: " + jsonMsg);
+        throw new IOException("unknown message type: " + msgType + ", raw json: " + jsonMsg);
       }
 
       reader.endObject();

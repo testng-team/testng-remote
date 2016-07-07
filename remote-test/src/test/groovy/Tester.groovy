@@ -1,6 +1,8 @@
 @Grab(group = 'org.osgi', module = 'osgi.core', version = '6.0.0')
+@Grab(group = 'org.testng.testng-remote', module = 'testng-remote', version = '1.0.1-SNAPSHOT')
 
 import org.osgi.framework.Version
+import org.testng.remote.strprotocol.JsonMessageSender
 
 //
 // global var
@@ -12,7 +14,7 @@ classifierVer = new Version("5.11")
 // TODO get the version properties passed by maven via system properties to be consistent with pom.xml
 groovyVer = "2.3.11"
 ivyVer = "2.3.0"
-testngRemoteVer = "1.0.0-SNAPSHOT"
+testngRemoteVer = "1.0.1-SNAPSHOT"
 
 workingDir = new File(System.getProperty("user.dir"))
 
@@ -123,41 +125,52 @@ def runTestNGTest(ver) {
         return -1
     }
 
-    def testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}.jar"
-    if (toVersion(ver.toString()).compareTo(classifierVer) <= 0) {
-        testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}-jdk15.jar"
+    def port = 12345
+    def msgHub = new JsonMessageSender("localhost", port)
+    Thread.start {
+        msgHub.initReceiver()
     }
 
-    println "classpath: ${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}\n"
-
-    def scriptFile = new File(scriptDir, "TestNGTest.groovy")
-    // run the groovy script via Java executable rather than groovy executable, because:
-    //      1) groovy has RootLoader loads groovy distributed testng jar, which is in prior to our own jar;
-    //      2) groovy @Grad can't specify the order of the jar on the classpath,
-    //          while testng-remote need to be on front of testng
-    //          (since some older version of testng jar contains older version of RemoteTestNG)
-    def output = new StringBuilder()
-    def process = new ProcessBuilder(
-            "java",
-            "-classpath", "${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}",
-//            "-Dtestng.eclipse.verbose",
-//            "-Dtestng.eclipse.debug",
-            "groovy.ui.GroovyMain",
-            scriptFile.absolutePath)
-            .directory(workingDir).redirectErrorStream(true).start()
-    process.inputStream.eachLine { println it; output << it.toString() }
-    process.waitFor();
-    def exitValue = process.exitValue()
-    if (exitValue == 0) {
-        return 0
-    } else {
-        if (output.contains("is not a supported TestNG version")) {
-            return 1
-        } else if (output.contains("java.lang.NoClassDefFoundError")) {
-            return 2;
-        } else {
-            return -1
+    try {
+        def testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}.jar"
+        if (toVersion(ver.toString()).compareTo(classifierVer) <= 0) {
+            testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}-jdk15.jar"
         }
+
+        println "classpath: ${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}\n"
+
+        def scriptFile = new File(scriptDir, "TestNGTest.groovy")
+        // run the groovy script via Java executable rather than groovy executable, because:
+        //      1) groovy has RootLoader loads groovy distributed testng jar, which is in prior to our own jar;
+        //      2) groovy @Grad can't specify the order of the jar on the classpath,
+        //          while testng-remote need to be on front of testng
+        //          (since some older version of testng jar contains older version of RemoteTestNG)
+        def output = new StringBuilder()
+        def process = new ProcessBuilder(
+                "java",
+                "-classpath", "${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}",
+                "-Dtestng.eclipse.verbose",
+                "-Dtestng.eclipse.debug",
+                "groovy.ui.GroovyMain",
+                scriptFile.absolutePath,
+                "json", "" + port)
+                .directory(workingDir).redirectErrorStream(true).start()
+        process.inputStream.eachLine { println it; output << it.toString() }
+        process.waitFor();
+        def exitValue = process.exitValue()
+        if (exitValue == 0) {
+            return 0
+        } else {
+            if (output.contains("is not a supported TestNG version")) {
+                return 1
+            } else if (output.contains("java.lang.NoClassDefFoundError")) {
+                return 2;
+            } else {
+                return -1
+            }
+        }
+    } finally {
+        msgHub.stopReceiver()
     }
 }
 

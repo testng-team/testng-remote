@@ -37,5 +37,13 @@ if (DEBUG) {
     println "\n===== Classpath END =====\n"
 }
 
-def args = ["-serport", "61497", "-protocol", "stdout", "-d", "./target/testng-output", "./src/test/resources/testng-remote.xml"] as String[]
+def protocol = "stdout"
+def port = "12345"
+
+if (args.length == 2) {
+    protocol = args[0]
+    port = args[1]
+}
+
+def args = ["-serport", port, "-protocol", protocol, "-d", "./target/testng-output", "./src/test/resources/testng-remote.xml"] as String[]
 RemoteTestNG.main(args)
