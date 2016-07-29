@@ -26,4 +26,27 @@ public final class ServiceLoaderHelper {
         }
         return factories.get(0);
     }
+
+    /**
+     * Get the first RemoteTestNGFactory.
+     * <p>
+     * this is specially for issue #29, with assumption that testng-remote jar is on front of any jar contains INDEX.LIST file.
+     * if the first RemoteTestNGFactory found, just return it.
+     * </p>
+     * @param version
+     * @return the RemoteTestNGFactory instance
+     */
+    public static RemoteTestNGFactory getFirstQuietly(Version version) {
+      try {
+        for (RemoteTestNGFactory factory : ServiceLoader.load(RemoteTestNGFactory.class)) {
+          if (factory.accept(version)) {
+              return factory;
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      throw new TestNGException(version + " is not a supported TestNG version");
+  }
 }
