@@ -6,6 +6,7 @@ import com.beust.jcommander.ParameterException;
 import org.osgi.framework.Version;
 import org.testng.CommandLineArgs;
 import org.testng.TestNGException;
+import org.testng.remote.support.RemoteTestNGFactory;
 import org.testng.remote.support.ServiceLoaderHelper;
 
 import java.io.InputStream;
@@ -39,7 +40,21 @@ public class RemoteTestNG {
         }
 
         p("detected TestNG version " + ver);
-        IRemoteTestNG remoteTestNg = ServiceLoaderHelper.getFirst(ver).createRemoteTestNG();
+        RemoteTestNGFactory factory;
+        try {
+            factory = ServiceLoaderHelper.getFirst(ver);
+        } catch (TestNGException e) {
+            throw e;
+        } catch (Exception e) {
+            if (isDebug()) {
+                e.printStackTrace();
+            }
+
+            // for issue #29, give it 2nd try by manually scanning the jars on classpath
+            factory = ServiceLoaderHelper.getFirstQuietly(ver);
+        }
+
+        IRemoteTestNG remoteTestNg = factory.createRemoteTestNG();
         remoteTestNg.dontExit(ra.dontExit);
         if (cla.port != null && ra.serPort != null) {
             throw new TestNGException("Can only specify one of " + CommandLineArgs.PORT
