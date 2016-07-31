@@ -9,6 +9,7 @@ import org.testng.TestNGException;
 import org.testng.remote.support.RemoteTestNGFactory;
 import org.testng.remote.support.ServiceLoaderHelper;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -29,6 +30,10 @@ public class RemoteTestNG {
     private static boolean m_debug;
 
     public static void main(String[] args) throws ParameterException {
+        if (isDebug()) {
+            dumpRevision();
+        }
+
         CommandLineArgs cla = new CommandLineArgs();
         RemoteArgs ra = new RemoteArgs();
         new JCommander(Arrays.asList(cla, ra), args);
@@ -199,5 +204,16 @@ public class RemoteTestNG {
 
     public static boolean isDebug() {
         return m_debug || System.getProperty(PROPERTY_DEBUG) != null;
+    }
+
+    public static void dumpRevision() {
+        ClassLoader cl = RemoteTestNG.class.getClassLoader();
+        Properties props = new Properties();
+        try (InputStream in = cl.getResourceAsStream("revision.properties")) {
+            props.load(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        props.list(System.out);
     }
 }
