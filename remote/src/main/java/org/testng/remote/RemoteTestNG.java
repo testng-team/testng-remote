@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class RemoteTestNG {
 
@@ -214,6 +215,10 @@ public class RemoteTestNG {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        props.list(System.out);
+
+        System.out.println("[RemoteTestNG] revisions:");
+        for (Entry<Object, Object> entry : props.entrySet()) {
+            System.out.println("\t" + entry.getKey() + "=" + entry.getValue());
+        }
     }
 }
