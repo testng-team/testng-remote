@@ -110,6 +110,7 @@ public class RemoteTestNG {
         if (isDebug()) {
           e.printStackTrace();
         }
+        p("now trying to parse the version from pom.properties");
 
         // for testng version < 6.6, since ClassNotFound: org.testng.internal.Version, 
         // parse the version from 'META-INF/maven/org.testng/testng/pom.properties' of testng jar on classpath
