@@ -1,21 +1,23 @@
-package org.testng.remote.support;
+package org.testng.remote.strprotocol;
 
 import org.testng.ISuite;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.internal.IResultListener;
-import org.testng.remote.strprotocol.MessageHub;
-import org.testng.remote.strprotocol.TestMessage;
-import org.testng.remote.strprotocol.TestResultMessage;
 import org.testng.xml.XmlTest;
 
-public class RemoteTestListener6_0 implements IResultListener {
+/**
+ * A special listener that remote the event with string protocol.
+ *
+ * @author <a href='mailto:the_mindstorm[at]evolva[dot]ro'>Alexandru Popescu</a>
+ */
+public class RemoteTestListener1 implements IResultListener {
   private final MessageHub m_sender;
   private ISuite m_suite;
   private XmlTest m_xmlTest;
   private ITestContext m_currentTestContext;
 
-  public RemoteTestListener6_0(ISuite suite, XmlTest test, MessageHub msh) {
+  public RemoteTestListener1(ISuite suite, XmlTest test, MessageHub msh) {
     m_sender = msh;
     m_suite= suite;
     m_xmlTest= test;

@@ -8,6 +8,7 @@ import org.testng.ITestRunnerFactory;
 import org.testng.TestRunner;
 import org.testng.remote.AbstractRemoteTestNG;
 import org.testng.remote.strprotocol.MessageHub;
+import org.testng.remote.strprotocol.RemoteTestListener1;
 import org.testng.reporters.JUnitXMLReporter;
 import org.testng.reporters.TestHTMLReporter;
 import org.testng.xml.XmlTest;
@@ -56,7 +57,7 @@ public class RemoteTestNG6_0 extends AbstractRemoteTestNG {
     public TestRunner newTestRunner(ISuite suite, XmlTest test,
         List<IInvokedMethodListener> listeners) {
       TestRunner tr = m_delegateFactory.newTestRunner(suite, test, listeners);
-      tr.addListener(new RemoteTestListener6_0(suite, test, m_messageSender));
+      tr.addListener(new RemoteTestListener1(suite, test, m_messageSender));
       return tr;
     }
   }
