@@ -18,6 +18,7 @@
         <module>remote6_9_10</module>
         <module>remote6_9_7</module>
         <module>remote6_5</module>
+        <module>remote6_0</module>
         <module>dist</module>
         <module>remote-test</module>
     </modules>
@@ -68,6 +69,11 @@
                         <artifactId>testng</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.testng.testng-remote</groupId>
+                <artifactId>testng-remote6_0</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng.testng-remote</groupId>

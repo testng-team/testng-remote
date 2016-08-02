@@ -119,6 +119,14 @@ public class TestResultMessage implements IStringMessage {
       stackTrace = sw.toString();
     }
 
+    String instName = "";
+    try {
+      instName = result.getInstanceName();
+    } catch (NoSuchMethodError e) {
+      // for testng version < 6.5.1
+      instName = result.getInstance().getClass().getName();
+    }
+
     init(MessageHelper.TEST_RESULT + result.getStatus(),
          suiteName,
          testName,
@@ -130,7 +138,7 @@ public class TestResultMessage implements IStringMessage {
          toString(result.getParameters(), result.getMethod().getMethod().getParameterTypes()),
          toString(result.getMethod().getMethod().getParameterTypes()),
          MessageHelper.replaceUnicodeCharactersWithAscii(result.getName()),
-         MessageHelper.replaceUnicodeCharactersWithAscii(result.getInstanceName()),
+         MessageHelper.replaceUnicodeCharactersWithAscii(instName),
          result.getMethod().getInvocationCount(),
          result.getMethod().getCurrentInvocationCount()
     );
