@@ -11,8 +11,6 @@ import org.testng.xml.XmlSuite;
 
 import java.util.List;
 
-import static org.testng.internal.Utils.defaultIfStringEmpty;
-
 /**
  * Extension of TestNG registering a remote TestListener.
  *
@@ -81,6 +79,14 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
 
   public static void validateCommandLineParameters(CommandLineArgs args) {
     TestNG.validateCommandLineParameters(args);
+  }
+
+  public static String defaultIfStringEmpty(String s, String defaultValue) {
+    return isStringEmpty(s) ? defaultValue : s;
+  }
+
+  public static boolean isStringEmpty(String s) {
+    return s == null || "".equals(s);
   }
 
   private void calculateAllSuites(List<XmlSuite> suites, List<XmlSuite> outSuites) {
