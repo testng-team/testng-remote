@@ -95,17 +95,7 @@ public class RemoteTestNG {
         Field field = clazz.getDeclaredField("VERSION");
         String strVer = (String) field.get(null);
 
-        // trim the version to leave digital number only
-        int idx = strVer.indexOf("beta");
-        if (idx > 0) {
-          strVer = strVer.substring(0, idx);
-        }
-        idx = strVer.indexOf("-SNAPSHOT");
-        if (idx > 0) {
-          strVer = strVer.substring(0, idx);
-        }
-
-        return new Version(strVer);
+        return toVersion(strVer);
       } catch (Exception e) {
         if (isDebug()) {
           e.printStackTrace();
@@ -126,7 +116,8 @@ public class RemoteTestNG {
             try (InputStream in = resources.nextElement().openStream()) {
               props.load(in);
             }
-            return new Version(props.getProperty("version"));
+
+            return toVersion(props.getProperty("version"));
           }
         } catch (Exception ex) {
           if (isDebug()) {
@@ -197,6 +188,20 @@ public class RemoteTestNG {
         sb.append(sep);
       }
       return sb.toString();
+    }
+
+    private static Version toVersion(String strVer) {
+      // trim the version to leave digital number only
+      int idx = strVer.indexOf("beta");
+      if (idx > 0) {
+        strVer = strVer.substring(0, idx);
+      }
+      idx = strVer.indexOf("-SNAPSHOT");
+      if (idx > 0) {
+        strVer = strVer.substring(0, idx);
+      }
+
+      return Version.parseVersion(strVer);
     }
 
     public static boolean isVerbose() {
