@@ -100,10 +100,12 @@ public class SuiteMessage implements IStringMessage {
 
   @Override
   public String toString() {
-    return "[SuiteMessage suite:" + m_suiteName
-        + (m_startSuite ? " starting" : " ending")
-        + " methodCount:" + m_testMethodCount
-        + "]";
+    StringBuilder sb = new StringBuilder();
+    sb.append("[SuiteMessage ==> suite:").append(m_suiteName)
+        .append(m_startSuite ? ", starting" : ", ending")
+        .append(", methodCount:" + m_testMethodCount)
+        .append("]");
+    return sb.toString();
   }
 
 }

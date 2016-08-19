@@ -450,9 +450,18 @@ public class TestResultMessage implements IStringMessage {
 
   @Override
   public String toString() {
-    return "[TestResultMessage suite:" + m_suiteName + " test:" + m_testName
-        + " method:" + m_testMethodName
-        + "]";
+    StringBuilder sb = new StringBuilder();
+    sb.append("[TestResultMessage ==> suite:").append(m_suiteName).append(", test:").append(m_testName)
+        .append(", class:").append(m_testClassName)
+        .append(", method:").append(m_testMethodName);
+    sb.append(", parameters:");
+    if (m_parameters != null) {
+      for (String p : m_parameters) {
+        sb.append(p).append(";");
+      }
+    }
+    sb.append("]");
+    return sb.toString();
   }
 
   public void setParameters(String[] params) {

@@ -115,9 +115,11 @@ public class TestMessage implements IStringMessage {
 
   @Override
   public String toString() {
-    return "[TestMessage suite:" + m_suiteName + " testName:" + m_testName
-        + " passed:" + m_passedTestCount + " failed:" + m_failedTestCount
-        + "]";
+    StringBuilder sb = new StringBuilder();
+    sb.append("[TestMessage ==> suite:").append(m_suiteName).append(", testName:").append(m_testName)
+        .append(", passed:").append(m_passedTestCount).append(", failed:").append(m_failedTestCount)
+        .append("]");
+    return sb.toString();
   }
 
 }

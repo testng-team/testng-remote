@@ -52,6 +52,8 @@ public class GenericMessage implements IStringMessage {
 
   @Override
   public String toString() {
-    return "[GenericMessage suiteCount:" + m_suiteCount + " testCount:" + m_testCount + "]";
+    StringBuilder sb = new StringBuilder();
+    sb.append("[GenericMessage ==> suiteCount:").append(m_suiteCount).append(", testCount:").append(m_testCount).append("]");
+    return sb.toString();
   }
 }
