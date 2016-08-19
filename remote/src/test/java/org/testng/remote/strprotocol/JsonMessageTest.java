@@ -43,7 +43,7 @@ public class JsonMessageTest {
   }
 
   @Test
-  public void jonsMessageStream() throws Exception {
+  public void jsonMessageStream() throws Exception {
     // dummy constructor parameters since the UT only verify message
     // marshalling/unmarshalling
     JsonMessageSender ms = new JsonMessageSender("localhost", -1);
