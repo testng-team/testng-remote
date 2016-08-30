@@ -115,7 +115,7 @@ public class RemoteTestNG {
       }
 
       throw new RuntimeException("Can't recognize the TestNG version on classpath."
-          + " Please make sure that there's a supported TestNG version (aka. >= 6.5.1) on your project.");
+          + " Please make sure that there's a supported TestNG version (aka. >= 6.0.0) on your project.");
     }
 
     /**
