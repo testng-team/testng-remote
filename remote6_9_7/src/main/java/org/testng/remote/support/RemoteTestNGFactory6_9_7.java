@@ -20,4 +20,9 @@ public class RemoteTestNGFactory6_9_7 extends AbstractRemoteTestNGFactory {
   protected VersionRange getAcceptableVersions() {
     return RANGE;
   }
+
+  @Override
+  public int getOrder() {
+    return 3;
+  }
 }

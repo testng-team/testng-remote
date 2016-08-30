@@ -13,9 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 public class RemoteTestNG {
 
@@ -86,38 +89,21 @@ public class RemoteTestNG {
      * @throws RuntimeException if can't recognize the TestNG version on classpath. 
      */
     private static Version getTestNGVersion() {
+      String strVer = null;
       try {
-        // use reflection to read org.testng.internal.Version.VERSION for reason of:
-        // 1. bypass the javac compile time constant substitution
-        // 2. org.testng.internal.Version is available since version 6.6
-        @SuppressWarnings("rawtypes")
-        Class clazz = Class.forName("org.testng.internal.Version");
-        Field field = clazz.getDeclaredField("VERSION");
-        String strVer = (String) field.get(null);
-
-        return toVersion(strVer);
+         strVer = getVersionFromClass();
+         return toVersion(strVer);
       } catch (Exception e) {
         if (isDebug()) {
           e.printStackTrace();
         }
-        p("now trying to parse the version from pom.properties");
 
-        // for testng version < 6.6, since ClassNotFound: org.testng.internal.Version, 
-        // parse the version from 'META-INF/maven/org.testng/testng/pom.properties' of testng jar on classpath
-
-        // assume this is the same classLoader loading the TestNG classes
-        ClassLoader cl = RemoteTestNG.class.getClassLoader();
-
+        Version ver = null;
         try {
-          Enumeration<URL> resources = cl.getResources(
-              "META-INF/maven/org.testng/testng/pom.properties");
-          while (resources.hasMoreElements()) {
-            Properties props = new Properties();
-            try (InputStream in = resources.nextElement().openStream()) {
-              props.load(in);
-            }
+          ver = parseVersionFromPom();
 
-            return toVersion(props.getProperty("version"));
+          if (ver == null) {
+            ver = parseVersionFromManifest();
           }
         } catch (Exception ex) {
           if (isDebug()) {
@@ -125,18 +111,103 @@ public class RemoteTestNG {
           }
         }
 
-        p("No TestNG version found on classpath");
-        if (isDebug()) {
-          if (cl instanceof URLClassLoader) {
-            p(join(((URLClassLoader) cl).getURLs(), ", "));
-          }
+        if (ver != null) {
+          return ver;
         }
       }
 
+      if (strVer != null && strVer.contains("DEV-SNAPSHOT")) {
+        // #36: for version contains DEV-SNAPSHOT, let ServiceLoaderHelper decide which Factory to use
+        return null;
+      }
+
       throw new RuntimeException("Can't recognize the TestNG version on classpath."
-          + " Please make sure that there's a supported TestNG version (aka. >= 6.5.1) on your project.");
+          + " Please make sure that there's a supported TestNG version (aka. >= 6.0.0) on your project.");
     }
 
+    /**
+     * use reflection to read org.testng.internal.Version.VERSION for reason of:
+     * <ul>
+     * <li>1. bypass the javac compile time constant substitution</li>
+     * <li>2. org.testng.internal.Version is available since version 6.6</li>
+     * </ul>
+     * 
+     * @return
+     * @throws Exception
+     */
+    private static String getVersionFromClass() throws Exception {
+      @SuppressWarnings("rawtypes")
+      Class clazz = Class.forName("org.testng.internal.Version");
+      Field field = clazz.getDeclaredField("VERSION");
+      return (String) field.get(null);
+    }
+
+    /**
+     * Parse the version from pom.properties.
+     * <p>
+     * for testng version < 6.6, since ClassNotFound: org.testng.internal.Version,
+     * parse the version from 'META-INF/maven/org.testng/testng/pom.properties' of testng jar on classpath
+     * </p>
+     * 
+     * @return the testng version, or {@code null} if not found.
+     * @throws Exception
+     */
+    private static Version parseVersionFromPom() throws Exception {
+      p("now trying to parse the version from pom.properties");
+
+      // assume this is the same classLoader loading the TestNG classes
+      ClassLoader cl = RemoteTestNG.class.getClassLoader();
+
+      Enumeration<URL> resources = cl.getResources(
+          "META-INF/maven/org.testng/testng/pom.properties");
+      while (resources.hasMoreElements()) {
+        Properties props = new Properties();
+        try (InputStream in = resources.nextElement().openStream()) {
+          props.load(in);
+        }
+
+        return toVersion(props.getProperty("version"));
+      }
+
+      return null;
+    }
+
+    /**
+     * Parse the version from MANIFEST.MF
+     * <p>
+     * in PR https://github.com/cbeust/testng/pull/1124, `public static final String VERSION = "DEV-SNAPSHOT";`, 
+     * method {@link #parseVersionFromClass()} can't get the exact version when launch the tests of TestNG itself in Eclipse,
+     * the workaround here is to parse the MANIFEST.MF to get the version.
+     * </p>
+     * 
+     * @return the testng version, or {@code null} if not found.
+     * @throws Exception
+     */
+    private static Version parseVersionFromManifest() throws Exception {
+      p("now trying to parse the version from MANIFEST.MF");
+
+      ClassLoader cl = RemoteTestNG.class.getClassLoader();
+
+      Enumeration<URL> resources = cl.getResources("META-INF/MANIFEST.MF");
+      while (resources.hasMoreElements()) {
+        Manifest mf = new Manifest(resources.nextElement().openStream());
+        Attributes mainAttrs = mf.getMainAttributes();
+        if ("testng".equals(mainAttrs.getValue("Specification-Title"))) {
+          return toVersion(mainAttrs.getValue("Specification-Version"));
+        }
+
+        if ("org.testng".equals(mainAttrs.getValue("Bundle-SymbolicName"))) {
+          return toVersion(mainAttrs.getValue("Bundle-Version"));
+        }
+
+        if ("org.testng.TestNG".equals(mainAttrs.getValue("Main-Class"))) {
+          return toVersion(mainAttrs.getValue("Implementation-Version"));
+        }
+      }
+
+      return null;
+    }
+    
     private static void initAndRun(IRemoteTestNG remoteTestNg, String[] args, CommandLineArgs cla, RemoteArgs ra) {
         if (m_debug) {
             // In debug mode, override the port and the XML file to a fixed location
@@ -179,15 +250,6 @@ public class RemoteTestNG {
         if (isVerbose()) {
             System.out.println("[RemoteTestNG] " + s);
         }
-    }
-
-    private static String join(URL[] urls, String sep) {
-      StringBuilder sb = new StringBuilder();
-      for (URL url : urls) {
-        sb.append(url);
-        sb.append(sep);
-      }
-      return sb.toString();
     }
 
     private static Version toVersion(String strVer) {
