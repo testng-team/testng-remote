@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
@@ -31,6 +33,15 @@ public final class ServiceLoaderHelper {
         if (factories.size() > 1) {
             System.err.println("[ServiceLoaderHelper] More than one working implementation for '" + version + "', we will use the first one");
         }
+
+        Collections.sort(factories, new Comparator<RemoteTestNGFactory>() {
+          @Override
+          public int compare(RemoteTestNGFactory o1, RemoteTestNGFactory o2) {
+            // the newest first
+            return o2.getOrder() - o1.getOrder();
+          }
+        });
+
         return factories.get(0);
     }
 

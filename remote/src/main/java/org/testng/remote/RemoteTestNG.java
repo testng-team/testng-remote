@@ -89,8 +89,10 @@ public class RemoteTestNG {
      * @throws RuntimeException if can't recognize the TestNG version on classpath. 
      */
     private static Version getTestNGVersion() {
+      String strVer = null;
       try {
-        return parseVersionFromClass();
+         strVer = getVersionFromClass();
+         return toVersion(strVer);
       } catch (Exception e) {
         if (isDebug()) {
           e.printStackTrace();
@@ -114,6 +116,11 @@ public class RemoteTestNG {
         }
       }
 
+      if (strVer != null && strVer.contains("DEV-SNAPSHOT")) {
+        // #36: for version contains DEV-SNAPSHOT, let ServiceLoaderHelper decide which Factory to use
+        return null;
+      }
+
       throw new RuntimeException("Can't recognize the TestNG version on classpath."
           + " Please make sure that there's a supported TestNG version (aka. >= 6.0.0) on your project.");
     }
@@ -128,13 +135,11 @@ public class RemoteTestNG {
      * @return
      * @throws Exception
      */
-    private static Version parseVersionFromClass() throws Exception {
+    private static String getVersionFromClass() throws Exception {
       @SuppressWarnings("rawtypes")
       Class clazz = Class.forName("org.testng.internal.Version");
       Field field = clazz.getDeclaredField("VERSION");
-      String strVer = (String) field.get(null);
-
-      return toVersion(strVer);
+      return (String) field.get(null);
     }
 
     /**
