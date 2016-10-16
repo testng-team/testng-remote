@@ -1,6 +1,8 @@
 language: java
 jdk:
+  - oraclejdk8
   - oraclejdk7
+  - openjdk7
 after_success:
   - mkdir ~/.groovy
   - cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
