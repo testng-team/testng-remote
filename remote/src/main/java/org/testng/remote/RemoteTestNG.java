@@ -252,7 +252,7 @@ public class RemoteTestNG {
         }
     }
 
-    private static Version toVersion(String strVer) {
+    static Version toVersion(String strVer) {
       // trim the version to leave digital number only
       int idx = strVer.indexOf("beta");
       if (idx > 0) {
