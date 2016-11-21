@@ -1,6 +1,7 @@
 package org.testng.remote.support;
 
 import org.testng.IClassListener;
+import org.testng.IConfigurationListener;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ITestRunnerFactory;
@@ -31,6 +32,9 @@ public class RemoteTestNG6_9_10 extends AbstractRemoteTestNG {
             if (m_useDefaultListeners) {
               runner.addListener(new TestHTMLReporter());
               runner.addListener(new JUnitXMLReporter());
+            }
+            for (IConfigurationListener cl : getConfiguration().getConfigurationListeners()) {
+              runner.addListener(cl);
             }
 
             return runner;
