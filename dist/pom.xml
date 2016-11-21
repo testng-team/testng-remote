@@ -32,6 +32,10 @@
             <groupId>org.testng.testng-remote</groupId>
             <artifactId>testng-remote6_9_10</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.testng.testng-remote</groupId>
+            <artifactId>testng-remote6_9_14</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -54,6 +58,7 @@
                                     <include>org.testng.testng-remote:testng-remote6_5</include>
                                     <include>org.testng.testng-remote:testng-remote6_9_7</include>
                                     <include>org.testng.testng-remote:testng-remote6_9_10</include>
+                                    <include>org.testng.testng-remote:testng-remote6_9_14</include>
                                 </includes>
                             </artifactSet>
                             <transformers>

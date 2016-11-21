@@ -32,7 +32,8 @@ public class RemoteArgs {
       if (value == null) {
         return null;
       }
-      return new Version(value);
+
+      return RemoteTestNG.toVersion(value);
     }
   }
 }
