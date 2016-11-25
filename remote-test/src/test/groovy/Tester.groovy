@@ -11,24 +11,13 @@ import org.testng.remote.strprotocol.JsonMessageSender
 // need to download the classifier jar for versions <= 5.11
 classifierVer = new Version("5.11")
 
-// TODO get the version properties passed by maven via system properties to be consistent with pom.xml
-groovyVer = "2.3.11"
-ivyVer = "2.3.0"
-testngRemoteVer = "1.0.1-SNAPSHOT"
+groovyVer = System.getProperty("GROOVY_VERSION") ?: "2.3.11"
+ivyVer = System.getProperty("IVY_VERSION") ?: "2.3.0"
+testngRemoteVer = System.getProperty("PROJECT_VERSION") ?: "1.1.0"
 
 workingDir = new File(System.getProperty("user.dir"))
-
-if (System.getProperty("PROJECT_VERSION")) {
-    testngRemoteVer = System.getProperty("PROJECT_VERSION")
-}
 if (System.getProperty("PROJECT_BASEDIR")) {
     workingDir = new File(System.getProperty("PROJECT_BASEDIR"))
-}
-if (System.getProperty("GROOVY_VERSION")) {
-    groovyVer = System.getProperty("GROOVY_VERSION")
-}
-if (System.getProperty("IVY_VERSION")) {
-    ivyVer = System.getProperty("IVY_VERSION");
 }
 
 println "\t:::"
