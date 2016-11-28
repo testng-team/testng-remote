@@ -15,7 +15,7 @@ import org.testng.xml.XmlTest;
 import java.util.Collection;
 import java.util.List;
 
-public class RemoteTestNG6_9_14 extends AbstractRemoteTestNG {
+public class RemoteTestNG6_10 extends AbstractRemoteTestNG {
 
   @Override
   protected ITestRunnerFactory buildTestRunnerFactory() {
