@@ -1,8 +1,8 @@
 package org.testng.remote;
 
-import org.osgi.framework.Version;
-import org.osgi.framework.VersionRange;
 import org.testng.remote.support.RemoteTestNGFactory;
+import org.testng.shaded.osgi.framework.Version;
+import org.testng.shaded.osgi.framework.VersionRange;
 
 public abstract class AbstractRemoteTestNGFactory implements RemoteTestNGFactory {
 

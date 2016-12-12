@@ -12,9 +12,9 @@ import java.util.ServiceLoader;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.osgi.framework.Version;
 import org.testng.TestNGException;
 import org.testng.remote.RemoteTestNG;
+import org.testng.shaded.osgi.framework.Version;
 
 public final class ServiceLoaderHelper {
 

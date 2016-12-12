@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.osgi.framework;
+package org.testng.shaded.osgi.framework;
 
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;

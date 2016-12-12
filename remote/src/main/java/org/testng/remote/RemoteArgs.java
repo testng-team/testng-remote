@@ -1,8 +1,9 @@
 package org.testng.remote;
 
+import org.testng.shaded.osgi.framework.Version;
+
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
-import org.osgi.framework.Version;
 
 public class RemoteArgs {
   public static final String PORT = "-serport";

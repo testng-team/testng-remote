@@ -1,8 +1,8 @@
 package org.testng.remote.support;
 
-import org.osgi.framework.Version;
 import org.testng.remote.IRemoteTestNG;
 import org.testng.remote.Orderable;
+import org.testng.shaded.osgi.framework.Version;
 
 public interface RemoteTestNGFactory extends Orderable {
 

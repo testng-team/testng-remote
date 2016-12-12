@@ -1,8 +1,8 @@
 package org.testng.remote.support;
 
-import org.osgi.framework.VersionRange;
 import org.testng.remote.AbstractRemoteTestNGFactory;
 import org.testng.remote.IRemoteTestNG;
+import org.testng.shaded.osgi.framework.VersionRange;
 
 import com.google.auto.service.AutoService;
 
