@@ -72,14 +72,8 @@ public class RemoteTestNG {
         m_debug = cla.debug;
         remoteTestNg.setDebug(cla.debug);
         remoteTestNg.setAck(ra.ack);
-        if (m_debug) {
-//      while (true) {
-            initAndRun(remoteTestNg, args, cla, ra);
-//      }
-        }
-        else {
-            initAndRun(remoteTestNg, args, cla, ra);
-        }
+
+        initAndRun(remoteTestNg, args, cla, ra);
     }
 
     /**

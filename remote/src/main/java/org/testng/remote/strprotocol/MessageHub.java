@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 import org.testng.TestNGException;
-import org.testng.remote.RemoteTestNG;
 
 /**
  * Central class to connect to the host and send message.
