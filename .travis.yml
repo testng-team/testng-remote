@@ -6,6 +6,9 @@ jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
+
+before_install: export MAVEN_SKIP_RC=true
+
 after_success:
   - mkdir ~/.groovy
   - cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
