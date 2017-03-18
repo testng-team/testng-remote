@@ -31,30 +31,40 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.5.0</version>
+                        <version>1.6.0</version>
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>exec</goal>
+                                    <goal>java</goal>
                                 </goals>
                                 <phase>test</phase>
                             </execution>
                         </executions>
                         <configuration>
-                            <executable>java</executable>
+                            <includeProjectDependencies>false</includeProjectDependencies>
+                            <includePluginDependencies>true</includePluginDependencies>
+                            <mainClass>groovy.ui.GroovyMain</mainClass>
                             <arguments>
-                                <argument>-DPROJECT_BASEDIR=${project.basedir}</argument>
-                                <argument>-DPROJECT_VERSION=${project.version}</argument>
-                                <argument>-DGROOVY_VERSION=${groovy.version}</argument>
-                                <argument>-DIVY_VERSION=${ivy.version}</argument>
-                                <argument>-classpath</argument>
-                                <classpath>
-                                    <dependency>org.codehaus.groovy:groovy-all</dependency>
-                                    <dependency>org.apache.ivy:ivy</dependency>
-                                </classpath>
-                                <argument>groovy.ui.GroovyMain</argument>
                                 <argument>${project.basedir}/src/test/groovy/Tester.groovy</argument>
                             </arguments>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>PROJECT_BASEDIR</key>
+                                    <value>${project.basedir}</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>PROJECT_VERSION</key>
+                                    <value>${project.version}</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>GROOVY_VERSION</key>
+                                    <value>${groovy.version}</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>IVY_VERSION</key>
+                                    <value>${ivy.version}</value>
+                                </systemProperty>
+                            </systemProperties>
                         </configuration>
                         <dependencies>
                             <!-- the groovy and ivy dependency are used by exec-maven-plugin -->
@@ -63,13 +73,11 @@
                                 <artifactId>groovy-all</artifactId>
                                 <!-- any version of Groovy \>= 1.5.0 should work here -->
                                 <version>${groovy.version}</version>
-                                <scope>runtime</scope>
                             </dependency>
                             <dependency>
                                 <groupId>org.apache.ivy</groupId>
                                 <artifactId>ivy</artifactId>
                                 <version>${ivy.version}</version>
-                                <scope>runtime</scope>
                             </dependency>
                         </dependencies>
                     </plugin>
