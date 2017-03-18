@@ -1,5 +1,5 @@
 @Grab(group = 'org.osgi', module = 'osgi.core', version = '6.0.0')
-@Grab(group = 'org.testng.testng-remote', module = 'testng-remote', version = '1.2.1-SNAPSHOT')
+@Grab(group = 'org.testng.testng-remote', module = 'testng-remote', version = '1.3.0-SNAPSHOT')
 
 import org.osgi.framework.Version
 import org.testng.remote.strprotocol.JsonMessageSender
