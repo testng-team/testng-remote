@@ -7,7 +7,8 @@ import com.beust.kobalt.plugin.java.*
 import org.apache.maven.model.*
 
 val bs = buildScript {
-    // The project launch servers that use the same port, so the build cannot run in parallel
+    // All the subprojects launch servers on similar ports, so they can't run
+    // in parallel
     kobaltOptions("--sequential")
 }
 
