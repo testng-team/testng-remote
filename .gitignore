@@ -21,3 +21,5 @@ test-output/
 
 dependency-reduced-pom.xml
 .DS_Store
+
+kobaltBuild
