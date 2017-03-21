@@ -6,10 +6,9 @@ import com.beust.kobalt.plugin.publish.*
 import com.beust.kobalt.plugin.java.*
 import org.apache.maven.model.*
 
-
 val bs = buildScript {
+    // The project launch servers that use the same port, so the build cannot run in parallel
     kobaltOptions("--sequential")
-    repos("http://jcenter.bintray.com","https://oss.sonatype.org/content/repositories/snapshots")
 }
 
 val autoServiceVersion = "1.0-rc3"
