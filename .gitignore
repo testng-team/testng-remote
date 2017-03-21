@@ -24,3 +24,5 @@ dependency-reduced-pom.xml
 
 kobaltBuild
 .kobalt
+
+local.properties
