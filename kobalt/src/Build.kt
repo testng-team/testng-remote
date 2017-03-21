@@ -65,11 +65,11 @@ val remote = project {
     }
 }
 
-fun Project.defineProject(n: String, d: String, testNgVersion: String, exclude: Boolean = true) {
-    this.name = n
+fun Project.defineProject(v: String, testNgVersion: String, exclude: Boolean = true) {
+    name = "testng-remote$v"
     group = "org.testng.testng-remote"
     version = projectVersion
-    directory = d
+    directory = "remote$v"
     testsDependOnProjects(remote)
 
     dependencies {
@@ -97,21 +97,21 @@ fun Project.defineProject(n: String, d: String, testNgVersion: String, exclude: 
 }
 
 val remote6_10 = project {
-    defineProject("testng-remote6_10", "remote6_10", "6.10", exclude = false)
+    defineProject("6_10", "6.10", exclude = false)
 }
 
 val remote6_9_10 = project {
-    defineProject("testng-remote6_9_10", "remote6_9_10", "6.9.10")
+    defineProject("6_9_10", "6.9.10")
 }
 
 val remote6_9_7 = project {
-    defineProject("testng-remote6_9_7", "remote6_9_7", "6.9.7")
+    defineProject("6_9_7", "6.9.7")
 }
 
 val remote6_5 = project {
-    defineProject("testng-remote6_5", "remote6_5", "6.5.1")
+    defineProject("6_5", "6.5.1")
 }
 
 val remote6_0 = project {
-    defineProject("testng-remote6_0", "remote6_0", "6.0")
+    defineProject("6_0", "6.0")
 }
