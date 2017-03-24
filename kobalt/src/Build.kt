@@ -13,12 +13,7 @@ val bs = buildScript {
 }
 
 val autoServiceVersion = "1.0-rc3"
-val bintrayPackage = "testng-remote"
-val bintrayRepo = "testng"
 val gsonVersion = "2.7"
-val mavenCompilerSource = "1.7"
-val mavenCompilerTarget = "1.7"
-val projectBuildSourceEncoding = "UTF-8"
 
 val projectVersion = "1.3.0"
 
