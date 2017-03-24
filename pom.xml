@@ -15,6 +15,7 @@
 
     <modules>
         <module>remote</module>
+        <module>remote6_12</module>
         <module>remote6_10</module>
         <module>remote6_9_10</module>
         <module>remote6_9_7</module>
@@ -94,6 +95,11 @@
             <dependency>
                 <groupId>org.testng.testng-remote</groupId>
                 <artifactId>testng-remote6_10</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testng.testng-remote</groupId>
+                <artifactId>testng-remote6_12</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

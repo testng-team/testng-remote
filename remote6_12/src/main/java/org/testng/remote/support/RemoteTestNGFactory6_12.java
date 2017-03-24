@@ -7,13 +7,13 @@ import org.testng.shaded.osgi.framework.VersionRange;
 import com.google.auto.service.AutoService;
 
 @AutoService(RemoteTestNGFactory.class)
-public class RemoteTestNGFactory6_10 extends AbstractRemoteTestNGFactory {
+public class RemoteTestNGFactory6_12 extends AbstractRemoteTestNGFactory {
 
-  private static final VersionRange RANGE = new VersionRange("[6.10,6.11.1)");
+  private static final VersionRange RANGE = new VersionRange("6.11.1");
 
   @Override
   public IRemoteTestNG createRemoteTestNG() {
-    return new RemoteTestNG6_10();
+    return new RemoteTestNG6_12();
   }
 
   @Override
@@ -23,6 +23,6 @@ public class RemoteTestNGFactory6_10 extends AbstractRemoteTestNGFactory {
 
   @Override
   public int getOrder() {
-    return 5;
+    return 6;
   }
 }

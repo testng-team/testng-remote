@@ -5,7 +5,6 @@ import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestRunnerFactory;
 import org.testng.TestNG;
-import org.testng.collections.Lists;
 import org.testng.remote.strprotocol.*;
 import org.testng.xml.XmlSuite;
 
@@ -89,13 +88,6 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
     return s == null || "".equals(s);
   }
 
-  private void calculateAllSuites(List<XmlSuite> suites, List<XmlSuite> outSuites) {
-    for (XmlSuite s : suites) {
-      outSuites.add(s);
-//      calculateAllSuites(s.getChildSuites(), outSuites);
-    }
-  }
-
   @Override
   public void run() {
     IMessageSender sender = getMessageSender();
@@ -103,32 +95,24 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
     msh.setDebug(m_debug);
     try {
       msh.connect();
-      // We couldn't do this until now in debug mode since the .xml file didn't exist yet.
-      // Now that we have connected with the Eclipse client, we know that it created the .xml
-      // file so we can proceed with the initialization
-      initializeSuitesAndJarFile();
 
-      List<XmlSuite> suites = Lists.newArrayList();
-      calculateAllSuites(m_suites, suites);
-//      System.out.println("Suites: " + m_suites.get(0).getChildSuites().size()
-//          + " and:" + suites.get(0).getChildSuites().size());
-      if(suites.size() > 0) {
+      initialize();
 
-        int testCount= 0;
+      if (canRun()) {
+        int testCount = 0;
 
-        for (XmlSuite suite : suites) {
+        for (XmlSuite suite : m_suites) {
           testCount += suite.getTests().size();
         }
 
         GenericMessage gm= new GenericMessage(MessageHelper.GENERIC_SUITE_COUNT);
-        gm.setSuiteCount(suites.size());
+        gm.setSuiteCount(m_suites.size());
         gm.setTestCount(testCount);
         msh.sendMessage(gm);
 
         addListener(new RemoteSuiteListener(msh));
         setTestRunnerFactory(createDelegatingTestRunnerFactory(buildTestRunnerFactory(), msh));
 
-//        System.out.println("RemoteTestNG starting");
         super.run();
       }
       else {
@@ -145,6 +129,22 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
         System.exit(0);
       }
     }
+  }
+
+  protected void initialize() {
+    // We couldn't do this until now in debug mode since the .xml file didn't exist yet.
+    // Now that we have connected with the Eclipse client, we know that it created the .xml
+    // file so we can proceed with the initialization
+    initializeSuitesAndJarFile();
+  }
+
+  /**
+   * run after {@link #initialize()}, tell if it's ready for running the test
+   * 
+   * @return {@code true} for ready.
+   */
+  protected boolean canRun() {
+    return m_suites.size() > 0;
   }
 
   private IMessageSender getMessageSender() {
