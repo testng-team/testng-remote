@@ -1,10 +1,13 @@
-import com.beust.kobalt.*
-import com.beust.kobalt.api.*
-import com.beust.kobalt.plugin.packaging.*
-import com.beust.kobalt.plugin.application.*
-import com.beust.kobalt.plugin.publish.*
-import com.beust.kobalt.plugin.java.*
-import org.apache.maven.model.*
+
+import com.beust.kobalt.api.Project
+import com.beust.kobalt.buildScript
+import com.beust.kobalt.plugin.packaging.assemble
+import com.beust.kobalt.plugin.publish.bintray
+import com.beust.kobalt.project
+import com.beust.kobalt.test
+import org.apache.maven.model.License
+import org.apache.maven.model.Model
+import org.apache.maven.model.Scm
 
 val bs = buildScript {
     // All the subprojects launch servers on similar ports, so they can't run
@@ -14,7 +17,7 @@ val bs = buildScript {
 
 val autoServiceVersion = "1.0-rc3"
 val gsonVersion = "2.7"
-
+val mainTestNgVersion = "6.10"
 val projectVersion = "1.3.0"
 
 val remote = project {
@@ -32,7 +35,7 @@ val remote = project {
     }
 
     dependenciesTest {
-        compile("org.testng:testng:6.10")
+        compile("org.testng:testng:$mainTestNgVersion")
     }
 
     assemble {
@@ -70,7 +73,7 @@ fun Project.defineProject(v: String, testNgVersion: String, exclude: Boolean = t
     dependencies {
         compile("com.google.guava:guava:19.0",
                 "com.google.code.gson:gson:$gsonVersion")
-        if (exclude) exclude("org.testng:testng:6.10")
+        if (exclude) exclude("org.testng:testng:$mainTestNgVersion")
     }
 
     dependenciesTest {
