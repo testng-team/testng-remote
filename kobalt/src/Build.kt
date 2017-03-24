@@ -1,6 +1,7 @@
 
 import com.beust.kobalt.api.Project
 import com.beust.kobalt.buildScript
+import com.beust.kobalt.localMaven
 import com.beust.kobalt.plugin.packaging.assemble
 import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.project
@@ -10,6 +11,7 @@ import org.apache.maven.model.Model
 import org.apache.maven.model.Scm
 
 val bs = buildScript {
+    repos(localMaven())
     // All the subprojects launch servers on similar ports, so they can't run
     // in parallel
     kobaltOptions("--sequential")
@@ -17,7 +19,7 @@ val bs = buildScript {
 
 val autoServiceVersion = "1.0-rc3"
 val gsonVersion = "2.7"
-val mainTestNgVersion = "6.10"
+val mainTestNgVersion = "6.11.1-SNAPSHOT"
 val projectVersion = "1.3.0"
 
 val remote = project {
@@ -47,9 +49,13 @@ val remote = project {
         publish = true
     }
 
+    definePom("TestNG Remote")
+}
+
+fun Project.definePom(d: String) {
     pom = Model().apply {
         name = project.name
-        description = "TestNG remote"
+        description = d
         url = "http://testng.org"
         licenses = listOf(License().apply {
             name = "Apache-2.0"
@@ -66,6 +72,7 @@ val remote = project {
 fun Project.defineProject(v: String, testNgVersion: String, exclude: Boolean = true) {
     name = "testng-remote$v"
     group = "org.testng.testng-remote"
+    artifactId = "testng-remote"
     version = projectVersion
     directory = "remote$v"
     testsDependOnProjects(remote)
@@ -92,6 +99,8 @@ fun Project.defineProject(v: String, testNgVersion: String, exclude: Boolean = t
     test {
         jvmArgs("-Dtest.resources.dir=../remote/src/test/resources")
     }
+
+    definePom(name)
 }
 
 val remote6_10 = project {
