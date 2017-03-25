@@ -28,6 +28,7 @@ abstract public class BaseMessageSender implements IMessageSender {
   protected Object m_ackLock = new Object();
 
   private boolean m_requestStopReceiver;
+  private ServerSocket m_serverSocket;
   /** Outgoing message stream. */
   protected OutputStream m_outStream;
   /** Used to send ACK and STOP */
@@ -124,11 +125,10 @@ abstract public class BaseMessageSender implements IMessageSender {
     if (m_inStream != null) {
       p("Receiver already initialized");
     }
-    ServerSocket serverSocket = null;
     try {
       p("initReceiver on port " + m_port);
-      serverSocket = new ServerSocket(m_port);
-      serverSocket.setSoTimeout(5000);
+      m_serverSocket = new ServerSocket(m_port);
+      m_serverSocket.setSoTimeout(5000);
 
       Socket socket = null;
       while (!m_requestStopReceiver) {
@@ -136,7 +136,7 @@ abstract public class BaseMessageSender implements IMessageSender {
           if (isDebug()) {
             p("polling the client connection");
           }
-          socket = serverSocket.accept();
+          socket = m_serverSocket.accept();
           // break the loop once the first client connected
           break;
         }
@@ -160,12 +160,22 @@ abstract public class BaseMessageSender implements IMessageSender {
       throw ste;
     }
     catch (IOException ioe) {
-      closeQuietly(serverSocket);
+      closeQuietly(m_serverSocket);
     }
   }
 
   public void stopReceiver() {
     m_requestStopReceiver = true;
+    try {
+      if (!m_serverSocket.isClosed()) {
+        m_serverSocket.close();
+      }
+    } catch (IOException e) {
+      if (isDebug()) {
+        e.printStackTrace();
+      }
+    }
+    p("Stopped receiver");
   }
 
   @Override

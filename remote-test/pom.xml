@@ -64,6 +64,10 @@
                                     <key>IVY_VERSION</key>
                                     <value>${ivy.version}</value>
                                 </systemProperty>
+                                <systemProperty>
+                                    <key>testng.eclipse.verbose</key>
+                                    <value>true</value>
+                                </systemProperty>
                             </systemProperties>
                         </configuration>
                         <dependencies>
