@@ -8,8 +8,6 @@ import org.testng.TestNG;
 import org.testng.remote.strprotocol.*;
 import org.testng.xml.XmlSuite;
 
-import java.util.List;
-
 /**
  * Extension of TestNG registering a remote TestListener.
  *

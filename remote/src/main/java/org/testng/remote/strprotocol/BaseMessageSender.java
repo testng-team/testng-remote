@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -18,9 +19,9 @@ import java.net.SocketTimeoutException;
 import org.testng.TestNGException;
 
 import static org.testng.remote.RemoteTestNG.isVerbose;
+import static org.testng.remote.RemoteTestNG.isDebug;
 
 abstract public class BaseMessageSender implements IMessageSender {
-  private boolean m_debug = false;
   protected Socket m_clientSocket;
   private String m_host;
   private int m_port;
@@ -57,7 +58,8 @@ abstract public class BaseMessageSender implements IMessageSender {
     p("Waiting for Eclipse client on " + m_host + ":" + m_port);
     while (true) {
       try {
-        m_clientSocket = new Socket(m_host, m_port);
+        m_clientSocket = new Socket();
+        m_clientSocket.connect(new InetSocketAddress(m_host, m_port), 60 * 1000);
         p("Received a connection from Eclipse on " + m_host + ":" + m_port);
 
         // Output streams
@@ -80,7 +82,8 @@ abstract public class BaseMessageSender implements IMessageSender {
         m_readerThread.start();
         return;
       }
-      catch(ConnectException ex) {
+      catch(SocketTimeoutException | ConnectException ex) {
+        p("connect failed: " + ex.toString());
         // ignore and retry
         try {
           Thread.sleep(4000);
@@ -130,7 +133,7 @@ abstract public class BaseMessageSender implements IMessageSender {
       Socket socket = null;
       while (!m_requestStopReceiver) {
         try {
-          if (m_debug) {
+          if (isDebug()) {
             p("polling the client connection");
           }
           socket = serverSocket.accept();
@@ -186,7 +189,7 @@ abstract public class BaseMessageSender implements IMessageSender {
       try {
         c.close();
       } catch (IOException e) {
-        if (m_debug) {
+        if (isDebug()) {
           e.printStackTrace();
         }
       }
@@ -232,7 +235,7 @@ abstract public class BaseMessageSender implements IMessageSender {
         String message = m_inReader.readLine();
         p("ReaderThread received admin message:" + message);
         while (message != null) {
-          if (m_debug) {
+          if (isDebug()) {
             p("Admin message:" + message); //$NON-NLS-1$
           }
           boolean acknowledge = message.startsWith(MessageHelper.ACK_MSG);
