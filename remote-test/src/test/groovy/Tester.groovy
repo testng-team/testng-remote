@@ -13,7 +13,7 @@ classifierVer = new Version("5.11")
 
 groovyVer = System.getProperty("GROOVY_VERSION") ?: "2.3.11"
 ivyVer = System.getProperty("IVY_VERSION") ?: "2.3.0"
-testngRemoteVer = System.getProperty("PROJECT_VERSION") ?: "1.1.0"
+testngRemoteVer = System.getProperty("PROJECT_VERSION") ?: "1.3.0-SNAPSHOT"
 
 workingDir = new File(System.getProperty("user.dir"))
 if (System.getProperty("PROJECT_BASEDIR")) {
@@ -92,9 +92,9 @@ println ""
 // failed if there's any OTHER failures
 assert resultSet[-1] == null
 
-def minVer = new Version("6.5.1")
+def minVer = new Version("6.0")
 resultSet[1].each {
-    // no version >= 6.5.1 will get error 'unsupported version detected'
+    // no version >= 6.0 will get error 'unsupported version detected'
     assert (toVersion(it.toString()).compareTo(minVer) < 0)
 }
 resultSet[2].each {
