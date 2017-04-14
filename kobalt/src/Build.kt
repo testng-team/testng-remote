@@ -2,7 +2,7 @@
 import com.beust.kobalt.api.Project
 import com.beust.kobalt.buildScript
 import com.beust.kobalt.localMaven
-import com.beust.kobalt.plugin.packaging.assemble
+import com.beust.kobalt.plugin.packaging.*
 import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.project
 import com.beust.kobalt.test
@@ -20,7 +20,7 @@ val bs = buildScript {
 val autoServiceVersion = "1.0-rc3"
 val gsonVersion = "2.7"
 val mainTestNgVersion = "6.11.1-SNAPSHOT"
-val projectVersion = "1.3.0"
+val projectVersion = "1.3.2-SNAPSHOT"
 
 val remote = project {
 
@@ -34,14 +34,11 @@ val remote = project {
         compile("com.google.code.gson:gson:$gsonVersion",
                 "com.google.auto.service:auto-service:$autoServiceVersion"
                 )
-    }
-
-    dependenciesTest {
         compile("org.testng:testng:$mainTestNgVersion")
     }
 
     assemble {
-        jar {
+        mavenJars {
         }
     }
 
@@ -75,15 +72,12 @@ fun Project.defineProject(v: String, testNgVersion: String, exclude: Boolean = t
     artifactId = "testng-remote"
     version = projectVersion
     directory = "remote$v"
-    testsDependOnProjects(remote)
+    dependsOn(remote)
 
     dependencies {
         compile("com.google.guava:guava:19.0",
                 "com.google.code.gson:gson:$gsonVersion")
         if (exclude) exclude("org.testng:testng:$mainTestNgVersion")
-    }
-
-    dependenciesTest {
         compile("org.testng:testng:$testNgVersion")
     }
 
