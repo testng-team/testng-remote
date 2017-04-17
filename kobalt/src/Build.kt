@@ -2,7 +2,7 @@
 import com.beust.kobalt.api.Project
 import com.beust.kobalt.buildScript
 import com.beust.kobalt.localMaven
-import com.beust.kobalt.plugin.packaging.*
+import com.beust.kobalt.plugin.packaging.assemble
 import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.project
 import com.beust.kobalt.test
@@ -19,8 +19,8 @@ val bs = buildScript {
 
 val autoServiceVersion = "1.0-rc3"
 val gsonVersion = "2.7"
-val mainTestNgVersion = "6.11.1-SNAPSHOT"
-val projectVersion = "1.3.2-SNAPSHOT"
+val mainTestNgVersion = "6.11"
+val projectVersion = "1.3.2"
 
 val remote = project {
 
