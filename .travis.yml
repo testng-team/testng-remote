@@ -15,7 +15,10 @@ jdk:
   - oraclejdk7
   - openjdk7
 
-before_install: export MAVEN_SKIP_RC=true
+before_install: 
+  - export MAVEN_SKIP_RC=true
+  - export JAVA_VER=$(java -version 2>&1 | grep -i version | cut -d'"' -f2 | cut -d'.' -f1-2)
+  - echo "JAVA_VER=$JAVA_VER"
 
 install: echo "skip 'mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V' step"
 
@@ -25,7 +28,7 @@ script:
   - mkdir -p ~/.m2
   - cp -f dist/settings.xml ~/.m2
   - sed -i -e "s/BINTRAY_USER/${BINTRAY_USER}/g" -e "s/BINTRAY_API_KEY/${BINTRAY_API_KEY}/g" ~/.m2/settings.xml
-  - mvn -e -DskipIntTest=false clean install jacoco:report coveralls:report
+  - if [[ "$JAVA_VER" == "9-ea" ]]; then mvn -e -DskipIntTest=false clean install jacoco:report; else mvn -e -DskipIntTest=false clean install jacoco:report coveralls:report; fi
 
 after_success:
   - if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]] && [[ ${TRAVIS_BRANCH} == "master" ]]; then mvn -e deploy; fi
