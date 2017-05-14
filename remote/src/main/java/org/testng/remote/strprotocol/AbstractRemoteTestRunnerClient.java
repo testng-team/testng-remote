@@ -178,20 +178,21 @@ public abstract class AbstractRemoteTestRunnerClient {
       try {
         IMessage message = m_messageHub.receiveMessage();
         while (message != null) {
-          if (message instanceof GenericMessage) {
-            notifyStart((GenericMessage) message);
-          }
-          else if (message instanceof SuiteMessage) {
-            notifySuiteEvents((SuiteMessage) message);
-          }
-          else if (message instanceof TestMessage) {
-            notifyTestEvents((TestMessage) message);
-          }
-          else if (message instanceof TestResultMessage) {
-            notifyResultEvents((TestResultMessage) message);
-          }
-          else {
-            throw new TestNGException("Unknown message type:" + message);
+          switch (message.getType()) {
+            case GENERIC:
+              notifyStart((GenericMessage) message);
+              break;
+            case SUITE:
+              notifySuiteEvents((SuiteMessage) message);
+              break;
+            case TEST:
+              notifyTestEvents((TestMessage) message);
+              break;
+            case TEST_RESULT:
+              notifyResultEvents((TestResultMessage) message);
+              break;
+            default:
+                throw new TestNGException("Unknown message type:" + message);
           }
 //          if (isRunning()) {
 //            m_messageMarshaller.sendAck();

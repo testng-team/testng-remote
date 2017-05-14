@@ -9,4 +9,10 @@ import java.io.Serializable;
  * @author Cedric Beust <cedric@beust.com>
  */
 public interface IMessage extends Serializable {
+
+  /**
+   * @return the message type
+   */
+  MessageType getType();
+
 }
