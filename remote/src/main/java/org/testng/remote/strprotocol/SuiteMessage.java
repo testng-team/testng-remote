@@ -99,6 +99,11 @@ public class SuiteMessage implements IStringMessage {
   }
 
   @Override
+  public MessageType getType() {
+    return MessageType.SUITE;
+  }
+
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("[SuiteMessage ==> suite:").append(m_suiteName)

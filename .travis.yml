@@ -1,5 +1,13 @@
 sudo: required
 dist: trusty
+before_cache:
+  - rm -f  $HOME/.m2/settings.xml
+  - rm -rf $HOME/.m2/repository/org/testng/testng-remote*
+  - rm -rf $HOME/.groovy/grapes/org.testng.testng-remote
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.groovy/grapes
 language: java
 jdk:
   - oraclejdk9
@@ -9,10 +17,15 @@ jdk:
 
 before_install: export MAVEN_SKIP_RC=true
 
-after_success:
-  - mkdir ~/.groovy
+install: echo "skip 'mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V' step"
+
+script:
+  - mkdir -p ~/.groovy
   - cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
-  - mkdir ~/.m2
+  - mkdir -p ~/.m2
   - cp -f dist/settings.xml ~/.m2
   - sed -i -e "s/BINTRAY_USER/${BINTRAY_USER}/g" -e "s/BINTRAY_API_KEY/${BINTRAY_API_KEY}/g" ~/.m2/settings.xml
-  - mvn -e -DskipIntTest=false clean deploy jacoco:report coveralls:report
+  - mvn -e -DskipIntTest=false clean install jacoco:report coveralls:report
+
+after_success:
+  - if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]] && [[ ${TRAVIS_BRANCH} == "master" ]]; then mvn -e deploy; fi

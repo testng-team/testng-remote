@@ -114,6 +114,11 @@ public class TestMessage implements IStringMessage {
   }
 
   @Override
+  public MessageType getType() {
+    return MessageType.TEST;
+  }
+
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("[TestMessage ==> suite:").append(m_suiteName).append(", testName:").append(m_testName)

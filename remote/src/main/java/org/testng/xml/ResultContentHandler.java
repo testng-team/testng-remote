@@ -10,20 +10,19 @@ import static org.testng.reporters.XMLReporterConfig.TAG_SUITE;
 import static org.testng.reporters.XMLReporterConfig.TAG_TEST;
 import static org.testng.reporters.XMLReporterConfig.TAG_TEST_METHOD;
 
+import java.util.List;
+
 import org.testng.ITestResult;
 import org.testng.collections.Lists;
 import org.testng.remote.strprotocol.GenericMessage;
 import org.testng.remote.strprotocol.IRemoteSuiteListener;
 import org.testng.remote.strprotocol.IRemoteTestListener;
-import org.testng.remote.strprotocol.MessageHelper;
 import org.testng.remote.strprotocol.SuiteMessage;
 import org.testng.remote.strprotocol.TestMessage;
 import org.testng.remote.strprotocol.TestResultMessage;
 import org.testng.reporters.XMLReporterConfig;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
-
-import java.util.List;
 
 /**
  * Parses testng-result.xml, create TestResultMessages and send them back to the listener
@@ -58,7 +57,7 @@ public class ResultContentHandler extends DefaultHandler {
       String qName, Attributes attributes) {
     p("Start " + qName);
     if (TAG_SUITE.equals(qName)) {
-      m_suiteListener.onInitialization(new GenericMessage(MessageHelper.GENERIC_SUITE_COUNT));
+      m_suiteListener.onInitialization(new GenericMessage());
       m_suiteMethodCount = 0;
       m_currentSuite = new SuiteMessage(attributes.getValue(ATTR_NAME),
           true /* start */, m_suiteMethodCount);

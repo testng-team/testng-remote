@@ -1,6 +1,7 @@
 package org.testng.remote.strprotocol;
 
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.StringWriter;
 
@@ -15,7 +16,7 @@ public class JsonMessageTest {
   @Test
   public void jsonGenericMessage() throws Exception {
     Gson gson = new GsonBuilder().create();
-    GenericMessage genMsg = new GenericMessage(MessageHelper.GENERIC_SUITE_COUNT);
+    GenericMessage genMsg = new GenericMessage();
     genMsg.setSuiteCount(2);
     genMsg.setTestCount(3);
 
@@ -26,6 +27,7 @@ public class JsonMessageTest {
     GenericMessage genMsg2 = gson.fromJson(jsonStrSuiteMsg, GenericMessage.class);
     System.out.println("marshall to object: ");
     System.out.println(genMsg2);
+    assertEquals(genMsg2.getType(), MessageType.GENERIC);
   }
 
   @Test
@@ -40,6 +42,7 @@ public class JsonMessageTest {
     SuiteMessage suiteMsg2 = gson.fromJson(jsonStrSuiteMsg, SuiteMessage.class);
     System.out.println("marshall to object: ");
     System.out.println(suiteMsg2);
+    assertEquals(suiteMsg2.getType(), MessageType.SUITE);
   }
 
   @Test
@@ -48,7 +51,7 @@ public class JsonMessageTest {
     // marshalling/unmarshalling
     JsonMessageSender ms = new JsonMessageSender("localhost", -1);
 
-    GenericMessage genMsg = new GenericMessage(MessageHelper.GENERIC_SUITE_COUNT);
+    GenericMessage genMsg = new GenericMessage();
     genMsg.setSuiteCount(2);
     genMsg.setTestCount(3);
     StringWriter sWriter = new StringWriter();
@@ -60,6 +63,7 @@ public class JsonMessageTest {
 
     IMessage message = ms.deserializeMessage(jsonMsg);
     assertTrue(message instanceof GenericMessage);
+    assertEquals(message.getType(), MessageType.GENERIC);
     System.out.println("marshall to object: ");
     System.out.println(message);
   }

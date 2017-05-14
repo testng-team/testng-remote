@@ -103,7 +103,7 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
           testCount += suite.getTests().size();
         }
 
-        GenericMessage gm= new GenericMessage(MessageHelper.GENERIC_SUITE_COUNT);
+        GenericMessage gm = new GenericMessage();
         gm.setSuiteCount(m_suites.size());
         gm.setTestCount(testCount);
         msh.sendMessage(gm);

@@ -48,10 +48,10 @@ public class MessageHelper {
   public static GenericMessage unmarshallGenericMessage(final String message) {
     String[] messageParts = parseMessage(message);
     if(messageParts.length == 1) {
-      return new GenericMessage(Integer.parseInt(messageParts[0]));
+      return new GenericMessage(MessageType.fromValue(messageParts[0]));
     }
     else {
-      GenericMessage result = new GenericMessage(Integer.parseInt(messageParts[0]));
+      GenericMessage result = new GenericMessage(MessageType.fromValue(messageParts[0]));
 
       for(int i = 1; i < messageParts.length; i+=2) {
         if ("testCount".equals(messageParts[i])) {

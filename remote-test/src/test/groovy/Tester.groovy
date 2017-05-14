@@ -184,6 +184,8 @@ def downloadTestNG(ver) {
             w << "@Grab(group = 'org.testng', module = 'testng', version = '${ver}', classifier = 'jdk15')" + "\n"
         }
 
+        w << "@GrabExclude('com.google.guava:guava')" + "\n"
+
         w << "@Grab(group = 'com.beust', module = 'jcommander', version = '1.48')" + "\n"
         w << "@Grab(group = 'org.testng.testng-remote', module = 'testng-remote-dist', version = '${testngRemoteVer}', classifier = 'shaded')" + "\n"
 

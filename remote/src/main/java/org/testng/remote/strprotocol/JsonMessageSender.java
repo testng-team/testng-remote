@@ -47,11 +47,8 @@ public class JsonMessageSender extends BaseMessageSender {
   void writeMessage(JsonWriter writer, IMessage message) throws IOException {
     writer.beginObject();
 
-    int messageType = getMessageType(message);
-    if (messageType < 0) {
-      throw new IOException("Unknown type for message: " + message);
-    }
-    writer.name("type").value(messageType);
+    MessageType messageType = getMessageType(message);
+    writer.name("type").value(messageType.getValue());
     writer.name("data");
     Gson gson = new GsonBuilder().create();
     gson.toJson(message, message.getClass(), writer);
@@ -59,18 +56,8 @@ public class JsonMessageSender extends BaseMessageSender {
     writer.endObject();
   }
 
-  private int getMessageType(IMessage message) {
-    if (message instanceof GenericMessage) {
-      return MessageHelper.GENERIC_SUITE_COUNT;
-    } else if (message instanceof SuiteMessage) {
-      return MessageHelper.SUITE;
-    } else if (message instanceof TestMessage) {
-      return MessageHelper.TEST;
-    } else if (message instanceof TestResultMessage) {
-      return MessageHelper.TEST_RESULT;
-    }
-    // unknown message type
-    return -1;
+  private MessageType getMessageType(IMessage message) {
+    return message.getType();
   }
 
   @Override
@@ -119,17 +106,17 @@ public class JsonMessageSender extends BaseMessageSender {
 
       Gson gson = new GsonBuilder().create();
       IMessage message = null;
-      switch (msgType) {
-      case MessageHelper.GENERIC_SUITE_COUNT:
+      switch (MessageType.fromValue(msgType)) {
+      case GENERIC:
         message = gson.fromJson(reader, GenericMessage.class);
         break;
-      case MessageHelper.SUITE:
+      case SUITE:
         message = gson.fromJson(reader, SuiteMessage.class);
         break;
-      case MessageHelper.TEST:
+      case TEST:
         message = gson.fromJson(reader, TestMessage.class);
         break;
-      case MessageHelper.TEST_RESULT:
+      case TEST_RESULT:
         message = gson.fromJson(reader, TestResultMessage.class);
         break;
       default:

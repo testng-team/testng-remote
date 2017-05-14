@@ -13,13 +13,17 @@ public class GenericMessage implements IStringMessage {
   private static final long serialVersionUID = 1440074281953763545L;
 //  protected Map m_properties;
   @SerializedName("messageType")
-  protected final int m_messageType;
+  protected final MessageType m_messageType;
   @SerializedName("suiteCount")
   private int m_suiteCount;
   @SerializedName("testCount")
   private int m_testCount;
 
-  public GenericMessage(final int type) {
+  public GenericMessage() {
+    this(MessageType.GENERIC);
+  }
+
+  public GenericMessage(final MessageType type) {
     m_messageType = type;
   }
 
@@ -40,10 +44,15 @@ public class GenericMessage implements IStringMessage {
   }
 
   @Override
+  public MessageType getType() {
+    return m_messageType;
+  }
+
+  @Override
   public String getMessageAsString() {
     StringBuffer buf = new StringBuffer();
 
-    buf.append(m_messageType);
+    buf.append(getType().getValue());
     buf.append(MessageHelper.DELIMITER).append("testCount").append(getTestCount())
         .append(MessageHelper.DELIMITER).append("suiteCount").append(getSuiteCount());
 
