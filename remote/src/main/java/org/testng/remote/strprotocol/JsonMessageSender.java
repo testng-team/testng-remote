@@ -47,17 +47,13 @@ public class JsonMessageSender extends BaseMessageSender {
   void writeMessage(JsonWriter writer, IMessage message) throws IOException {
     writer.beginObject();
 
-    MessageType messageType = getMessageType(message);
+    MessageType messageType = message.getType();
     writer.name("type").value(messageType.getValue());
     writer.name("data");
     Gson gson = new GsonBuilder().create();
     gson.toJson(message, message.getClass(), writer);
 
     writer.endObject();
-  }
-
-  private MessageType getMessageType(IMessage message) {
-    return message.getType();
   }
 
   @Override
@@ -98,6 +94,10 @@ public class JsonMessageSender extends BaseMessageSender {
       }
 
       int msgType = reader.nextInt();
+      MessageType type = MessageType.fromValue(msgType);
+      if (type == null) {
+        throw new IOException("unknown message type: " + msgType + ", raw json: " + jsonMsg);
+      }
 
       name = reader.nextName();
       if (!"data".equals(name)) {
@@ -106,7 +106,7 @@ public class JsonMessageSender extends BaseMessageSender {
 
       Gson gson = new GsonBuilder().create();
       IMessage message = null;
-      switch (MessageType.fromValue(msgType)) {
+      switch (type) {
       case GENERIC:
         message = gson.fromJson(reader, GenericMessage.class);
         break;
@@ -120,7 +120,7 @@ public class JsonMessageSender extends BaseMessageSender {
         message = gson.fromJson(reader, TestResultMessage.class);
         break;
       default:
-        throw new IOException("unknown message type: " + msgType + ", raw json: " + jsonMsg);
+        throw new IOException("unsupported message type: " + msgType + ", raw json: " + jsonMsg);
       }
 
       reader.endObject();
