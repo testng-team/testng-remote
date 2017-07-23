@@ -24,7 +24,7 @@ install: echo "skip 'mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -
 script:
   - mkdir -p ~/.groovy
   - cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
-  - if [[ "$JAVA_VER" == "9-ea" ]]; then mvn -e -DskipIntTest=false clean install jacoco:report; else mvn -e -DskipIntTest=false clean install jacoco:report coveralls:report; fi
+  - if [[ "$JAVA_VER" == "9" ]]; then mvn -e -DskipIntTest=false clean install jacoco:report; else mvn -e -DskipIntTest=false clean install jacoco:report coveralls:report; fi
 
 after_success:
   - cp -f dist/settings.xml ~/.m2
