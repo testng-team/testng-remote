@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map.Entry;
@@ -88,7 +89,9 @@ public class RemoteTestNG {
          strVer = getVersionFromClass();
          return toVersion(strVer);
       } catch (Exception e) {
-        if (isDebug()) {
+        p("failed to get TestNG version from class: " + e.getClass().getCanonicalName() + ": "
+            + e.getMessage());
+        if (isVerbose()) {
           e.printStackTrace();
         }
 
@@ -132,6 +135,12 @@ public class RemoteTestNG {
     private static String getVersionFromClass() throws Exception {
       @SuppressWarnings("rawtypes")
       Class clazz = Class.forName("org.testng.internal.Version");
+      if (isDebug()) {
+        CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+        if (codeSource != null) {
+          p("loaded class " + clazz.getCanonicalName() + " at " + codeSource.getLocation());
+        }
+      }
       Field field = clazz.getDeclaredField("VERSION");
       return (String) field.get(null);
     }
@@ -154,16 +163,24 @@ public class RemoteTestNG {
 
       Enumeration<URL> resources = cl.getResources(
           "META-INF/maven/org.testng/testng/pom.properties");
+      Version ver = null;
       while (resources.hasMoreElements()) {
-        Properties props = new Properties();
-        try (InputStream in = resources.nextElement().openStream()) {
-          props.load(in);
+        URL url = resources.nextElement();
+        if (ver == null) {
+          Properties props = new Properties();
+          try (InputStream in = url.openStream()) {
+            props.load(in);
+          }
+  
+          p("parsing TestNG version at " + url);
+          ver = toVersion(props.getProperty("version"));
         }
-
-        return toVersion(props.getProperty("version"));
+        else {
+          p("find more testng pom.properties but ignored: " + url);
+        }
       }
 
-      return null;
+      return ver;
     }
 
     /**
@@ -184,24 +201,28 @@ public class RemoteTestNG {
 
       Enumeration<URL> resources = cl.getResources("META-INF/MANIFEST.MF");
       while (resources.hasMoreElements()) {
-        Manifest mf = new Manifest(resources.nextElement().openStream());
+        URL url = resources.nextElement();
+        Manifest mf = new Manifest(url.openStream());
         Attributes mainAttrs = mf.getMainAttributes();
         if ("testng".equals(mainAttrs.getValue("Specification-Title"))) {
+          p("parsing TestNG version at " + url);
           return toVersion(mainAttrs.getValue("Specification-Version"));
         }
 
         if ("org.testng".equals(mainAttrs.getValue("Bundle-SymbolicName"))) {
+          p("parsing TestNG version at " + url);
           return toVersion(mainAttrs.getValue("Bundle-Version"));
         }
 
         if ("org.testng.TestNG".equals(mainAttrs.getValue("Main-Class"))) {
+          p("parsing TestNG version at " + url);
           return toVersion(mainAttrs.getValue("Implementation-Version"));
         }
       }
 
       return null;
     }
-    
+
     private static void initAndRun(IRemoteTestNG remoteTestNg, String[] args, CommandLineArgs cla, RemoteArgs ra) {
         if (m_debug) {
             // In debug mode, override the port and the XML file to a fixed location
@@ -241,9 +262,7 @@ public class RemoteTestNG {
     }
 
     private static void p(String s) {
-        if (isVerbose()) {
-            System.out.println("[RemoteTestNG] " + s);
-        }
+      System.out.println("[RemoteTestNG] " + s);
     }
 
     static Version toVersion(String strVer) {
