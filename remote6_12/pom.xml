@@ -8,10 +8,10 @@
     </parent>
 
     <artifactId>testng-remote6_12</artifactId>
-    <name>TestNG Remote for version [6.11.1, -)</name>
+    <name>TestNG Remote for version [6.12, -)</name>
 
     <properties>
-        <testng.version>6.11.1-SNAPSHOT</testng.version>
+        <testng.version>6.12</testng.version>
     </properties>
 
     <dependencies>

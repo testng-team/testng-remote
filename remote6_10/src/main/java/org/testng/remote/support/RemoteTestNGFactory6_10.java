@@ -9,7 +9,7 @@ import com.google.auto.service.AutoService;
 @AutoService(RemoteTestNGFactory.class)
 public class RemoteTestNGFactory6_10 extends AbstractRemoteTestNGFactory {
 
-  private static final VersionRange RANGE = new VersionRange("[6.10,6.11.1)");
+  private static final VersionRange RANGE = new VersionRange("[6.10,6.12)");
 
   @Override
   public IRemoteTestNG createRemoteTestNG() {
