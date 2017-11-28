@@ -1,5 +1,5 @@
 @Grab(group = 'org.osgi', module = 'osgi.core', version = '6.0.0')
-@Grab(group = 'org.testng.testng-remote', module = 'testng-remote', version = '1.3.1-SNAPSHOT')
+@Grab(group = 'org.testng.testng-remote', module = 'testng-remote', version = '1.4.0-SNAPSHOT')
 
 import org.osgi.framework.Version
 import org.testng.remote.strprotocol.JsonMessageSender
@@ -13,7 +13,7 @@ classifierVer = new Version("5.11")
 
 groovyVer = System.getProperty("GROOVY_VERSION") ?: "2.3.11"
 ivyVer = System.getProperty("IVY_VERSION") ?: "2.3.0"
-testngRemoteVer = System.getProperty("PROJECT_VERSION") ?: "1.3.1-SNAPSHOT"
+testngRemoteVer = System.getProperty("PROJECT_VERSION") ?: "1.4.0-SNAPSHOT"
 
 workingDir = new File(System.getProperty("user.dir"))
 if (System.getProperty("PROJECT_BASEDIR")) {
