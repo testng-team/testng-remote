@@ -275,6 +275,10 @@ public class RemoteTestNG {
       if (idx > 0) {
         strVer = strVer.substring(0, idx);
       }
+      idx = strVer.indexOf("-RC");
+      if (idx > 0) {
+    	  	strVer = strVer.substring(0, idx);
+      }
 
       return Version.parseVersion(strVer);
     }
