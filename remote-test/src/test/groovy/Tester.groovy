@@ -211,5 +211,9 @@ def Version toVersion(String ver) {
     if ("5.5.m".equals(ver)) {
         ver = "5.5"
     }
+    def idx = ver.indexOf("-RC")
+    if (idx > 0) {
+        ver = ver.substring(0, idx)
+    }
     return new Version(ver)
 }
