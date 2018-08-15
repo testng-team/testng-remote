@@ -53,6 +53,12 @@ metadata.versioning.versions.version.each { version ->
     println ">>>>> Testing ${version}"
     println ">>>>>"
 
+    // workaround: skip testing on 6.14.0-RC3
+    if (version == "6.14.0-RC3") {
+        println "skip testing ${version}"
+        return
+    }
+
     def exitValue = runTestNGTest(version)
     def rset = resultSet[exitValue]
     if (rset == null) {
