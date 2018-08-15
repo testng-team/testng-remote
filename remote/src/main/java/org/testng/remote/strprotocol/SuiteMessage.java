@@ -37,7 +37,7 @@ public class SuiteMessage implements IStringMessage {
 
   public SuiteMessage(final ISuite suite, final boolean startSuiteRun) {
     m_suiteName = suite.getName();
-    m_testMethodCount =suite.getInvokedMethods().size();
+    m_testMethodCount =suite.getAllInvokedMethods().size();
     m_startSuite = startSuiteRun;
     Collection<ITestNGMethod> excludedMethods = suite.getExcludedMethods();
     if (excludedMethods != null && excludedMethods.size() > 0) {
