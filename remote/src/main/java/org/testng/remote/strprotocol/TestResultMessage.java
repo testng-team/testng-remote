@@ -2,9 +2,11 @@ package org.testng.remote.strprotocol;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.testng.ITestContext;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.collections.Lists;
@@ -127,16 +129,24 @@ public class TestResultMessage implements IStringMessage {
       instName = result.getInstance().getClass().getName();
     }
 
+    Class<?>[] paramTypes = new Class<?>[0];
+    try {
+      paramTypes = result.getMethod().getConstructorOrMethod().getParameterTypes();
+    } catch (NoSuchMethodError e) {
+      // for testng version < 6.5.1
+      paramTypes = result.getMethod().getMethod().getParameterTypes();
+    }
+
     init(MessageHelper.TEST_RESULT + result.getStatus(),
          suiteName,
          testName,
          result.getTestClass().getName(),
-         result.getMethod().getMethod().getName(),
+         result.getMethod().getMethodName(),
          MessageHelper.replaceUnicodeCharactersWithAscii(stackTrace),
          result.getStartMillis(),
          result.getEndMillis(),
-         toString(result.getParameters(), result.getMethod().getMethod().getParameterTypes()),
-         toString(result.getMethod().getMethod().getParameterTypes()),
+         toString(result.getParameters(), paramTypes),
+         toString(paramTypes),
          MessageHelper.replaceUnicodeCharactersWithAscii(result.getName()),
          MessageHelper.replaceUnicodeCharactersWithAscii(instName),
          result.getMethod().getInvocationCount(),

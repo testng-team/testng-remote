@@ -3,6 +3,7 @@ package org.testng.remote;
 import org.testng.CommandLineArgs;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
+import org.testng.ITestNGListener;
 import org.testng.ITestRunnerFactory;
 import org.testng.TestNG;
 import org.testng.remote.strprotocol.*;
@@ -108,7 +109,7 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
         gm.setTestCount(testCount);
         msh.sendMessage(gm);
 
-        addListener(new RemoteSuiteListener(msh));
+        super.addListener((ITestNGListener) new RemoteSuiteListener(msh));
         setTestRunnerFactory(createDelegatingTestRunnerFactory(buildTestRunnerFactory(), msh));
 
         super.run();

@@ -11,11 +11,10 @@ language: java
 jdk:
   - oraclejdk9
   - oraclejdk8
-  - openjdk7
 
 before_install: 
   - export MAVEN_SKIP_RC=true
-  - export JAVA_VER=$(java -version 2>&1 | grep -i version | cut -d'"' -f2 | cut -d'.' -f1-2)
+  - export JAVA_VER=$(java -version 2>&1 | grep -i version | cut -d'"' -f2 | cut -d'.' -f1)
   - echo "JAVA_VER=$JAVA_VER"
 
 install: echo "skip 'mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V' step"
