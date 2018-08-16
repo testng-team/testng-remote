@@ -48,7 +48,10 @@ resultSet = new HashMap<Integer, Set>()
 def startTime = System.currentTimeMillis()
 def metadata = new XmlSlurper().parse("https://bintray.com/cbeust/maven/download_file?file_path=org%2Ftestng%2Ftestng%2Fmaven-metadata.xml")
 
-def verBlackList = ['6.14.0-RC2', '6.14.0-RC3']
+def versionBlackList = ['6.14.0-RC2', '6.14.0-RC3']
+if (System.getProperty('java.version').startsWith('1.7')) {
+    versionBlackList.add('7.*')
+}
 
 metadata.versioning.versions.version.each { version ->
     println ">>>>>"
@@ -56,9 +59,11 @@ metadata.versioning.versions.version.each { version ->
     println ">>>>>"
 
     // skip invalid testng jar
-    if (verBlackList.contains(version)) {
-        println "skip testing ${version} \n"
-        return
+    for (def bver : versionBlackList) {
+        if (version.toString().matches(bver)) {
+            println "skip testing ${version} \n"
+            return
+        }
     }
 
     def exitValue = runTestNGTest(version)
