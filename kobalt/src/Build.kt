@@ -112,3 +112,7 @@ val remote6_9_7 = project {
 val remote6_5 = project {
     defineProject("6_5", "6.5.1")
 }
+
+val remote6_0 = project {
+    defineProject("6_0", "6.0")
+}
