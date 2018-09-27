@@ -267,17 +267,13 @@ public class RemoteTestNG {
 
     static Version toVersion(String strVer) {
       // trim the version to leave digital number only
-      int idx = strVer.indexOf("beta");
+      int idx = strVer.indexOf("-");
       if (idx > 0) {
         strVer = strVer.substring(0, idx);
       }
-      idx = strVer.indexOf("-SNAPSHOT");
+      idx = strVer.indexOf("beta");
       if (idx > 0) {
-        strVer = strVer.substring(0, idx);
-      }
-      idx = strVer.indexOf("-RC");
-      if (idx > 0) {
-    	  	strVer = strVer.substring(0, idx);
+          strVer = strVer.substring(0, idx);
       }
 
       return Version.parseVersion(strVer);
