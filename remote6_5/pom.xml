@@ -11,7 +11,7 @@
     <name>TestNG Remote for version [6.5.1, 6.9.7)</name>
 
     <properties>
-        <testng.version>6.5.1</testng.version>
+        <testng.version>7.4.0</testng.version>
     </properties>
 
     <dependencies>
