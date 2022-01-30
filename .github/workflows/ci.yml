@@ -27,7 +27,7 @@ jobs:
           mkdir -p ~/.groovy
           cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
           if [[ "${{ matrix.java }}" == "9" ]]; then
-            mvn -e -DskipIntTest=false clean install jacoco:report
+            mvn -e -DskipIntTest=false clean install
           else
-            mvn -e -DskipIntTest=false clean install jacoco:report coveralls:report
+            mvn -e -DskipIntTest=false clean install
           fi
