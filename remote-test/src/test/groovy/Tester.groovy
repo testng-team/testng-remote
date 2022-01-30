@@ -46,7 +46,7 @@ resultSet = new HashMap<Integer, Set>()
 
 
 def startTime = System.currentTimeMillis()
-def metadata = new XmlSlurper().parse("https://bintray.com/cbeust/maven/download_file?file_path=org%2Ftestng%2Ftestng%2Fmaven-metadata.xml")
+def metadata = new XmlSlurper().parse("https://repo1.maven.org/maven2/org/testng/testng/maven-metadata.xml")
 
 def versionBlackList = ['6.12', '6.13', '6.14.0-RC2', '6.14.0-RC3', '7.0.0-beta2', '7.0.0-beta4', '7.1.0', '7.1.1']
 if (System.getProperty('java.version').startsWith('1.7')) {
