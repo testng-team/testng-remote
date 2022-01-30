@@ -14,6 +14,8 @@ classifierVer = new Version("5.11")
 groovyVer = System.getProperty("GROOVY_VERSION") ?: "2.3.11"
 ivyVer = System.getProperty("IVY_VERSION") ?: "2.3.0"
 testngRemoteVer = System.getProperty("PROJECT_VERSION") ?: "1.4.0"
+jcmdVer = "1.48"
+slf4jVer = "1.7.32"
 
 workingDir = new File(System.getProperty("user.dir"))
 if (System.getProperty("PROJECT_BASEDIR")) {
@@ -38,7 +40,8 @@ ivyJar = "${mvnRepoDir}/org/apache/ivy/ivy/${ivyVer}/ivy-${ivyVer}.jar"
 grapeRepoDir = System.getenv("HOME") + "/.groovy/grapes"
 
 remoteTestngJar = "${grapeRepoDir}/org.testng.testng-remote/testng-remote-dist/jars/testng-remote-dist-${testngRemoteVer}-shaded.jar"
-jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-1.48.jar"
+jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-${jcmdVer}.jar"
+slf4jJar = "${grapeRepoDir}/org.slf4j/slf4j-api/jars/slf4j-api-${slf4jVer}.jar"
 
 resultSet = new HashMap<Integer, Set>()
 
@@ -46,7 +49,7 @@ resultSet = new HashMap<Integer, Set>()
 
 
 def startTime = System.currentTimeMillis()
-def metadata = new XmlSlurper().parse("https://bintray.com/cbeust/maven/download_file?file_path=org%2Ftestng%2Ftestng%2Fmaven-metadata.xml")
+def metadata = new XmlSlurper().parse("https://repo1.maven.org/maven2/org/testng/testng/maven-metadata.xml")
 
 def versionBlackList = ['6.12', '6.13', '6.14.0-RC2', '6.14.0-RC3', '7.0.0-beta2', '7.0.0-beta4', '7.1.0', '7.1.1']
 if (System.getProperty('java.version').startsWith('1.7')) {
@@ -139,7 +142,7 @@ def runTestNGTest(ver) {
             testngJar = "${grapeRepoDir}/org.testng/testng/jars/testng-${ver}-jdk15.jar"
         }
 
-        println "classpath: ${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}\n"
+        println "classpath: ${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}:${slf4jJar}\n"
 
         def scriptFile = new File(scriptDir, "TestNGTest.groovy")
         // run the groovy script via Java executable rather than groovy executable, because:
@@ -150,7 +153,7 @@ def runTestNGTest(ver) {
         def output = new StringBuilder()
         def process = new ProcessBuilder(
                 "java",
-                "-classpath", "${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}",
+                "-classpath", "${groovyJar}:${ivyJar}:${remoteTestngJar}:${testngJar}:${jcmdJar}:${slf4jJar}",
                 "-Dtestng.eclipse.verbose",
                 "-Dtestng.eclipse.debug",
                 "groovy.ui.GroovyMain",
@@ -199,7 +202,8 @@ def downloadTestNG(ver) {
 
         w << "@GrabExclude('com.google.guava:guava')" + "\n"
 
-        w << "@Grab(group = 'com.beust', module = 'jcommander', version = '1.48')" + "\n"
+        w << "@Grab(group = 'com.beust', module = 'jcommander', version = '${jcmdVer}')" + "\n"
+        w << "@Grab(group = 'org.slf4j', module = 'slf4j-api', version = '${slf4jVer}')" + "\n"
         w << "@Grab(group = 'org.testng.testng-remote', module = 'testng-remote-dist', version = '${testngRemoteVer}', classifier = 'shaded')" + "\n"
 
         w << "import org.testng.annotations.Test;" + "\n"

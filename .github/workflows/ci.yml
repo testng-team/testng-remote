@@ -1,0 +1,30 @@
+name: CI
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        java: [ '8', '11']
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'adopt'
+          cache: 'maven'
+      - name: Build with Maven
+        run: |
+          mkdir -p ~/.groovy
+          ./mvnw --version
+          cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
+          ./mvnw -e -DskipIntTest=false clean install jacoco:report
