@@ -200,6 +200,7 @@ def downloadTestNG(ver) {
         w << "@GrabExclude('com.google.guava:guava')" + "\n"
 
         w << "@Grab(group = 'com.beust', module = 'jcommander', version = '1.48')" + "\n"
+        w << "@Grab(group = 'org.slf4j', module = 'slf4j-api', version = '1.7.32')" + "\n"
         w << "@Grab(group = 'org.testng.testng-remote', module = 'testng-remote-dist', version = '${testngRemoteVer}', classifier = 'shaded')" + "\n"
 
         w << "import org.testng.annotations.Test;" + "\n"
