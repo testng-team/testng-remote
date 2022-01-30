@@ -25,9 +25,10 @@ jobs:
       - name: Build with Maven
         run: |
           mkdir -p ~/.groovy
+          ./mvnw --version
           cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
           if [[ "${{ matrix.java }}" == "9" ]]; then
-            mvn -e -DskipIntTest=false clean install
+            ./mvnw -e -DskipIntTest=false clean install
           else
-            mvn -e -DskipIntTest=false clean install
+            ./mvnw -e -DskipIntTest=false clean install
           fi
