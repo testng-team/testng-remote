@@ -179,32 +179,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <name>bintray</name>
-            <url>http://jcenter.bintray.com</url>
-        </repository>
-        <repository>
-            <id>ojo-snapshot</id>
-            <name>ojo-snapshot</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>bintray-repo-testng-remote</id>
-            <url>https://api.bintray.com/maven/testng-team/${bintray.repo}/${bintray.package}/;publish=1</url>
-        </repository>
-        <snapshotRepository>
-            <id>ojo-snapshots</id>
-            <name>oss-jfrog-artifactory-snapshots</name>
-            <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>
