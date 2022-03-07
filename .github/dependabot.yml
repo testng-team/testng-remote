@@ -9,9 +9,4 @@ updates:
   - dependency-name: org.testng:testng
     versions:
     - "> 6.5.1"
-  - dependency-name: com.google.auto.service:auto-service
-    versions:
-    - 1.0-rc7
-  - dependency-name: pl.project13.maven:git-commit-id-plugin
-    versions:
-    - 4.0.3
+ 
