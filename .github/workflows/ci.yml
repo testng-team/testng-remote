@@ -28,3 +28,15 @@ jobs:
           ./mvnw --version
           cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
           ./mvnw -e -DskipIntTest=false clean install jacoco:report
+
+      - name: Publish snapshots
+        uses: samuelmeuli/action-maven-publish@v1
+        # publish snapshot only when push to master branch
+        if: github.event_name == 'push'
+        with:
+          gpg_private_key: ${{ secrets.gpg_private_key }}
+          gpg_passphrase: ${{ secrets.gpg_passphrase }}
+          nexus_username: ${{ secrets.nexus_username }}
+          nexus_password: ${{ secrets.nexus_password }}
+          maven_profiles: deploy
+          maven_goals_phases: clean deploy
