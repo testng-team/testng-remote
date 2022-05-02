@@ -34,7 +34,7 @@ jobs:
       - name: Publish snapshots
         uses: samuelmeuli/action-maven-publish@v1
         # publish snapshot only when push to master branch
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && matrix.java == '8'
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}

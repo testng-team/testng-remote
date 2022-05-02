@@ -9,14 +9,6 @@ TestNG Remote - the modules for running TestNG remotely. This is normally used b
 ### Current Release Version
 
 ```xml
-<repositories>
-  <repository>
-    <id>jcenter</id>
-    <name>bintray</name>
-    <url>http://jcenter.bintray.com</url>
-  </repository>
-</repositories>
-
 <dependency>
   <groupId>org.testng.testng-remote</groupId>
   <artifactId>testng-remote-dist</artifactId>
