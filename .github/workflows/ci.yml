@@ -6,13 +6,15 @@ on:
   pull_request:
     branches:
     - master
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   build:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        java: [ '8', '11']
+        java: ['11']
 
     steps:
       - uses: actions/checkout@v2
