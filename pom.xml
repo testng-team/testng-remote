@@ -194,6 +194,23 @@
         </plugins>
     </build>
 
+
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <name>bintray</name>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
+        <repository>
+            <id>ojo-snapshot</id>
+            <name>ojo-snapshot</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <profiles>
         <!-- Deployment profile (required so these plugins are only used when deploying) -->
         <profile>
