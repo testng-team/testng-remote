@@ -103,6 +103,11 @@
                 <artifactId>testng-remote6_12</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.testng.testng-remote</groupId>
+                <artifactId>testng-remote7_8</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
