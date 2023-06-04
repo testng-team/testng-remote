@@ -13,18 +13,19 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         java: ['11']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
+          java-package: 'jdk'
           check-latest: true
           server-id: 'ossrh' # must match the serverId configured for the nexus-staging-maven-plugin
           server-username: OSSRH_USERNAME # Env var that holds your OSSRH user name
