@@ -19,7 +19,7 @@
     <resolvers>
         <chain name="downloadGrapes" returnFirst="true">
             <!-- todo add 'endorsed groovy extensions' resolver here -->
-            <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true"/>
+            <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true" checkmodified="true" usepoms="false"/>
             <filesystem name="cachedGrapes">
                 <ivy pattern="${user.home}/.groovy/grapes/[organisation]/[module]/ivy-[revision].xml"/>
                 <artifact pattern="${user.home}/.groovy/grapes/[organisation]/[module]/[type]s/[artifact]-[revision](-[classifier]).[ext]"/>
