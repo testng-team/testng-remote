@@ -37,6 +37,7 @@ jobs:
           mkdir -p ~/.groovy
           ./mvnw --version
           cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
+          rm -rf ~/.m2/repository/org/osgi ~/.m2/repository/junit/junit ~/.m2/repository/com/google/inject/guice
           ./mvnw -e -DskipIntTest=false clean install jacoco:report
 
       - name: Publish
