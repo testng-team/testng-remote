@@ -10,7 +10,7 @@ TestNG Remote - the modules for running TestNG remotely. This is normally used b
 
 ```xml
 <dependency>
-  <groupId>org.testng.testng-remote</groupId>
+  <groupId>org.testng</groupId>
   <artifactId>testng-remote-dist</artifactId>
   <version>1.5.0</version>
   <classifier>shaded</classifier>

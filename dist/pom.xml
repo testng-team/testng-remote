@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.testng.testng-remote</groupId>
+        <groupId>org.testng</groupId>
         <artifactId>testng-remote-parent</artifactId>
         <version>1.5.0-SNAPSHOT</version>
     </parent>
@@ -13,35 +13,35 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.testng.testng-remote</groupId>
+            <groupId>org.testng</groupId>
             <artifactId>testng-remote</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testng.testng-remote</groupId>
+            <groupId>org.testng</groupId>
             <artifactId>testng-remote6_0</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testng.testng-remote</groupId>
+            <groupId>org.testng</groupId>
             <artifactId>testng-remote6_5</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testng.testng-remote</groupId>
+            <groupId>org.testng</groupId>
             <artifactId>testng-remote6_9_7</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testng.testng-remote</groupId>
+            <groupId>org.testng</groupId>
             <artifactId>testng-remote6_9_10</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testng.testng-remote</groupId>
+            <groupId>org.testng</groupId>
             <artifactId>testng-remote6_10</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testng.testng-remote</groupId>
+            <groupId>org.testng</groupId>
             <artifactId>testng-remote6_12</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testng.testng-remote</groupId>
+            <groupId>org.testng</groupId>
             <artifactId>testng-remote7_8</artifactId>
         </dependency>
     </dependencies>
@@ -61,14 +61,14 @@
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <artifactSet>
                                 <includes>
-                                    <include>org.testng.testng-remote:testng-remote</include>
-                                    <include>org.testng.testng-remote:testng-remote6_0</include>
-                                    <include>org.testng.testng-remote:testng-remote6_5</include>
-                                    <include>org.testng.testng-remote:testng-remote6_9_7</include>
-                                    <include>org.testng.testng-remote:testng-remote6_9_10</include>
-                                    <include>org.testng.testng-remote:testng-remote6_10</include>
-                                    <include>org.testng.testng-remote:testng-remote6_12</include>
-                                    <include>org.testng.testng-remote:testng-remote7_8</include>
+                                    <include>org.testng:testng-remote</include>
+                                    <include>org.testng:testng-remote6_0</include>
+                                    <include>org.testng:testng-remote6_5</include>
+                                    <include>org.testng:testng-remote6_9_7</include>
+                                    <include>org.testng:testng-remote6_9_10</include>
+                                    <include>org.testng:testng-remote6_10</include>
+                                    <include>org.testng:testng-remote6_12</include>
+                                    <include>org.testng:testng-remote7_8</include>
                                 </includes>
                             </artifactSet>
                             <transformers>
