@@ -16,13 +16,13 @@
 
     <modules>
         <module>remote</module>
-        <module>remote7_8</module>
-        <module>remote6_12</module>
-        <module>remote6_10</module>
-        <module>remote6_9_10</module>
-        <module>remote6_9_7</module>
-        <module>remote6_5</module>
-        <module>remote6_0</module>
+        <module>remote-7_8</module>
+        <module>remote-6_12</module>
+        <module>remote-6_10</module>
+        <module>remote-6_9_10</module>
+        <module>remote-6_9_7</module>
+        <module>remote-6_5</module>
+        <module>remote-6_0</module>
         <module>dist</module>
         <module>remote-test</module>
     </modules>
@@ -76,37 +76,37 @@
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
-                <artifactId>testng-remote6_0</artifactId>
+                <artifactId>testng-remote-6_0</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
-                <artifactId>testng-remote6_5</artifactId>
+                <artifactId>testng-remote-6_5</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
-                <artifactId>testng-remote6_9_7</artifactId>
+                <artifactId>testng-remote-6_9_7</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
-                <artifactId>testng-remote6_9_10</artifactId>
+                <artifactId>testng-remote-6_9_10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
-                <artifactId>testng-remote6_10</artifactId>
+                <artifactId>testng-remote-6_10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
-                <artifactId>testng-remote6_12</artifactId>
+                <artifactId>testng-remote-6_12</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
-                <artifactId>testng-remote7_8</artifactId>
+                <artifactId>testng-remote-7_8</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
