@@ -3,13 +3,11 @@ on:
   push:
     branches:
     - master
-    - ci/publish
   pull_request:
     branches:
     - master
   schedule:
     - cron: "0 0 * * *"
-  workflow_dispatch: {}
 
 jobs:
   build:
@@ -34,17 +32,17 @@ jobs:
           gpg-passphrase: SIGN_KEY_PASS # Env var that holds the key's passphrase
           cache: 'maven'
 
-#      - name: Build with Maven
-#        run: |
-#          mkdir -p ~/.groovy
-#          ./mvnw --version
-#          cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
-#          ./mvnw -e -DskipIntTest=false clean install jacoco:report
+      - name: Build with Maven
+        run: |
+          mkdir -p ~/.groovy
+          ./mvnw --version
+          cp -f remote-test/src/test/resources/grapeConfig.xml ~/.groovy
+          ./mvnw -e -DskipIntTest=false clean install jacoco:report
 
       - name: Publish
         # publish snapshot only when push to master branch
-        if: github.event_name == 'push'
-        run: ./mvnw -U -B clean deploy -P deploy
+        if: github.event_name == 'push' && github.ref_name == 'master'
+        run: ./mvnw -U -B clean -DskipTests deploy -P deploy
         env:
           SIGN_KEY_PASS: ${{ secrets.GPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.NEXUS_USERNAME }}
