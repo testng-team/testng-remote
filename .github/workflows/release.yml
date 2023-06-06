@@ -1,0 +1,49 @@
+name: Create Release
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'The release version. Ex: 1.5.0'
+        required: true
+      developmentVersion:
+        description: 'The next development version. Ex: 1.5.1-SNAPSHOT'
+        required: true
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          # to bypass the branch protection rule for maven-release-plugin
+          # see https://github.community/t/push-to-restricted-master-branch/18191/2
+          persist-credentials: false
+
+      - name: Configure Git user
+        run: |
+          git config user.email "cibot@testng.org"
+          git config user.name "CI Bot"
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          java-package: 'jdk'
+          check-latest: true
+          server-id: 'ossrh' # must match the serverId configured for the nexus-staging-maven-plugin
+          server-username: OSSRH_USERNAME # Env var that holds your OSSRH user name
+          server-password: OSSRH_PASSWORD # Env var that holds your OSSRH user pw
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }} # Substituted with the value stored in the referenced secret
+          gpg-passphrase: SIGN_KEY_PASS # Env var that holds the key's passphrase
+          cache: 'maven'
+
+      - name: Release
+        run: ./mvnw -U -B clean -DskipTests -B release:prepare release:perform -P deploy
+        env:
+          SIGN_KEY_PASS: ${{ secrets.GPG_PASSPHRASE }}
+          OSSRH_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
