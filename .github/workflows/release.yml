@@ -8,6 +8,8 @@ on:
       developmentVersion:
         description: 'The next development version. Ex: 1.5.1-SNAPSHOT'
         required: true
+permissions:
+  contents: write
 
 jobs:
   release:
@@ -42,7 +44,13 @@ jobs:
           cache: 'maven'
 
       - name: Release
-        run: ./mvnw -U -B clean -DskipTests -B release:prepare release:perform -P deploy
+        run: |
+          ./mvnw -DskipTests -Darguments="-DskipTests" \
+              -Dusername=cibot -Dpassword=${{ secrets.GITHUB_TOKEN }} \
+              -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} \
+              -DreleaseVersion=${{ github.event.inputs.releaseVersion }} \
+              -Dtag=${{ github.event.inputs.releaseVersion }} \
+              -B release:prepare release:perform -P deploy
         env:
           SIGN_KEY_PASS: ${{ secrets.GPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.NEXUS_USERNAME }}

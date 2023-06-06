@@ -9,7 +9,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/testng-team/testng-remote.git</connection>
-        <developerConnection>scm:git:git@github.com:testng-team/testng-remote.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/testng-team/testng-remote.git</developerConnection>
         <url>https://github.com/testng-team/testng-remote</url>
         <tag>HEAD</tag>
     </scm>
