@@ -1,5 +1,5 @@
 @Grab(group = 'org.osgi', module = 'osgi.core', version = '6.0.0')
-@Grab(group = 'org.testng.testng-remote', module = 'testng-remote', version = '1.4.0')
+@Grab(group = 'org.testng', module = 'testng-remote', version = '1.4.0')
 
 import org.osgi.framework.Version
 import org.testng.remote.strprotocol.JsonMessageSender
@@ -39,7 +39,7 @@ ivyJar = "${mvnRepoDir}/org/apache/ivy/ivy/${ivyVer}/ivy-${ivyVer}.jar"
 
 grapeRepoDir = System.getenv("HOME") + "/.groovy/grapes"
 
-remoteTestngJar = "${grapeRepoDir}/org.testng.testng-remote/testng-remote-dist/jars/testng-remote-dist-${testngRemoteVer}-shaded.jar"
+remoteTestngJar = "${grapeRepoDir}/org.testng/testng-remote-dist/jars/testng-remote-dist-${testngRemoteVer}-shaded.jar"
 jcmdJar = "${grapeRepoDir}/com.beust/jcommander/jars/jcommander-${jcmdVer}.jar"
 slf4jJar = "${grapeRepoDir}/org.slf4j/slf4j-api/jars/slf4j-api-${slf4jVer}.jar"
 
@@ -204,7 +204,7 @@ def downloadTestNG(ver) {
 
         w << "@Grab(group = 'com.beust', module = 'jcommander', version = '${jcmdVer}')" + "\n"
         w << "@Grab(group = 'org.slf4j', module = 'slf4j-api', version = '${slf4jVer}')" + "\n"
-        w << "@Grab(group = 'org.testng.testng-remote', module = 'testng-remote-dist', version = '${testngRemoteVer}', classifier = 'shaded')" + "\n"
+        w << "@Grab(group = 'org.testng', module = 'testng-remote-dist', version = '${testngRemoteVer}', classifier = 'shaded')" + "\n"
 
         w << "import org.testng.annotations.Test;" + "\n"
     }
