@@ -1,13 +1,8 @@
 name: Create Release
 on:
-  workflow_dispatch:
-    inputs:
-      releaseVersion:
-        description: 'The release version. Ex: 1.5.0'
-        required: true
-      developmentVersion:
-        description: 'The next development version. Ex: 1.5.1-SNAPSHOT'
-        required: true
+  workflow_dispatch: {}
+permissions:
+  contents: write
 
 jobs:
   release:
@@ -42,7 +37,10 @@ jobs:
           cache: 'maven'
 
       - name: Release
-        run: ./mvnw -U -B clean -DskipTests -B release:prepare release:perform -P deploy
+        run: |
+          ./mvnw -DskipTests -Darguments="-DskipTests" \
+              -Dusername=cibot -Dpassword=${{ secrets.GITHUB_TOKEN }} \
+              -B release:prepare release:perform -P deploy
         env:
           SIGN_KEY_PASS: ${{ secrets.GPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.NEXUS_USERNAME }}
