@@ -5,6 +5,26 @@
     <packaging>pom</packaging>
     <version>1.5.1-SNAPSHOT</version>
     <name>Remote TestNG</name>
+    <description>Run TestNG in Distribution Mode (Remote Client-Server Mode)</description>
+    <url>https://github.com/testng-team/testng-remote</url>
+
+    <licenses>
+        <license>
+            <name>Apache License</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Nick Tan</name>
+            <organizationUrl>https://github.com/missedone</organizationUrl>
+        </developer>
+        <developer>
+            <name>Julien Herr</name>
+            <organizationUrl>https://github.com/juherr</organizationUrl>
+        </developer>
+    </developers>
 
     <scm>
         <connection>scm:git:https://github.com/testng-team/testng-remote.git</connection>
