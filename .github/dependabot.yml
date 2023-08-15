@@ -9,4 +9,7 @@ updates:
   - dependency-name: org.testng:testng
     versions:
     - "> 6.5.1"
- 
+ - package-ecosystem: github-actions
+   directory: "/" 
+   schedule:
+     interval: weekly
