@@ -11,7 +11,7 @@
     <name>TestNG Remote for version [7.9.0, -)</name>
 
     <properties>
-        <testng.version>7.9.0-SNAPSHOT</testng.version>
+        <testng.version>7.9.0</testng.version>
     </properties>
 
     <dependencies>
