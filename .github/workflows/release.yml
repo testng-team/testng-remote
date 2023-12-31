@@ -1,6 +1,13 @@
 name: Create Release
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'The release version. Ex: 1.6.0'
+        required: true
+      developmentVersion:
+        description: 'The next development version. Ex: 1.7.0-SNAPSHOT'
+        required: true
 permissions:
   contents: write
 
@@ -40,6 +47,8 @@ jobs:
         run: |
           ./mvnw -DskipTests -Darguments="-DskipTests" \
               -Dusername=cibot -Dpassword=${{ secrets.GITHUB_TOKEN }} \
+              -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} \
+              -DreleaseVersion=${{ github.event.inputs.releaseVersion }} \
               -B release:prepare release:perform -P deploy
         env:
           SIGN_KEY_PASS: ${{ secrets.GPG_PASSPHRASE }}
