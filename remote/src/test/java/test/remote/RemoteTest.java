@@ -63,22 +63,19 @@ public abstract class RemoteTest extends SimpleBaseTest {
   }
 
   private void launchRemoteTestNG(final String portArg, final int portValue, final String protocol) {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        List<String> args = new ArrayList<>();
-        args.add(portArg);
-        args.add(Integer.toString(portValue));
-        args.add(RemoteArgs.VERSION);
-        args.add(getTestNGVersion());
-        if (protocol != null) {
-          args.add(RemoteArgs.PROTOCOL);
-          args.add(protocol);
-        }
-        args.add("-dontexit");
-        args.add(getPathToResource("testng-remote.xml"));
-        RemoteTestNG.main(args.toArray(new String[0]));
-        }
+    new Thread(() -> {
+      List<String> args = new ArrayList<>();
+      args.add(portArg);
+      args.add(Integer.toString(portValue));
+      args.add(RemoteArgs.VERSION);
+      args.add(getTestNGVersion());
+      if (protocol != null) {
+        args.add(RemoteArgs.PROTOCOL);
+        args.add(protocol);
+      }
+      args.add("-dontexit");
+      args.add(getPathToResource("testng-remote.xml"));
+      RemoteTestNG.main(args.toArray(new String[0]));
       }).start();
   }
 

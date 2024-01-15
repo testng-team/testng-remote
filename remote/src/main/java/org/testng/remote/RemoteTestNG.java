@@ -66,12 +66,26 @@ public class RemoteTestNG {
 
         IRemoteTestNG remoteTestNg = factory.createRemoteTestNG();
         remoteTestNg.dontExit(ra.dontExit);
-        if (cla.port != null && ra.serPort != null) {
-            throw new TestNGException("Can only specify one of " + CommandLineArgs.PORT
-                    + " and " + RemoteArgs.PORT);
+
+        boolean debug = ra.debug;
+        if (!debug) {
+            // use reflection below for backward compatibility of testng version < 7.10.0
+            try {
+                Field debugField = CommandLineArgs.class.getDeclaredField("debug");
+                Object d = debugField.get(cla);
+                if (d != null) {
+                    if (Boolean.valueOf(d.toString())) {
+                        debug = true;
+                    }
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                if (isDebug()) {
+                    e.printStackTrace();
+                }
+            }
         }
-        m_debug = cla.debug;
-        remoteTestNg.setDebug(cla.debug);
+        m_debug = debug;
+        remoteTestNg.setDebug(debug);
         remoteTestNg.setAck(ra.ack);
 
         initAndRun(remoteTestNg, args, cla, ra);
@@ -226,17 +240,45 @@ public class RemoteTestNG {
     private static void initAndRun(IRemoteTestNG remoteTestNg, String[] args, CommandLineArgs cla, RemoteArgs ra) {
         if (m_debug) {
             // In debug mode, override the port and the XML file to a fixed location
-            cla.port = Integer.parseInt(DEBUG_PORT);
-            ra.serPort = cla.port;
+            ra.serPort = Integer.parseInt(DEBUG_PORT);
             cla.suiteFiles = Arrays.asList(new String[] {
                     DEBUG_SUITE_DIRECTORY + DEBUG_SUITE_FILE
             });
         }
         remoteTestNg.configure(cla);
-        remoteTestNg.setHost(cla.host);
+        String host = ra.host;
+        if (host == null || host.isBlank()) {
+            // use reflection below for backward compatibility of testng version < 7.10.0
+            try {
+                Field hostField = CommandLineArgs.class.getDeclaredField("host");
+                Object h = hostField.get(cla);
+                if (h != null) {
+                    host = (String) h;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                if (isDebug()) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        remoteTestNg.setHost(host);
         remoteTestNg.setSerPort(ra.serPort);
         remoteTestNg.setProtocol(ra.protocol);
-        remoteTestNg.setPort(cla.port);
+
+        Integer port = null;
+        // use reflection below for backward compatibility of testng version < 7.10.0
+        try {
+            Field portField = CommandLineArgs.class.getDeclaredField("port");
+            Object p = portField.get(cla);
+            if (p != null) {
+                port = Integer.valueOf(p.toString());
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            if (isDebug()) {
+                e.printStackTrace();
+            }
+        }
+        remoteTestNg.setPort(port);
         if (isVerbose()) {
             StringBuilder sb = new StringBuilder("Invoked with ");
             for (String s : args) {
@@ -280,8 +322,7 @@ public class RemoteTestNG {
     }
 
     public static boolean isVerbose() {
-        boolean result = System.getProperty(PROPERTY_VERBOSE) != null || isDebug();
-        return result;
+        return System.getProperty(PROPERTY_VERBOSE) != null || isDebug();
     }
 
     public static boolean isDebug() {
