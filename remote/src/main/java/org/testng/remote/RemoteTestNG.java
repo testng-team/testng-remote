@@ -66,12 +66,9 @@ public class RemoteTestNG {
 
         IRemoteTestNG remoteTestNg = factory.createRemoteTestNG();
         remoteTestNg.dontExit(ra.dontExit);
-        if (cla.port != null && ra.serPort != null) {
-            throw new TestNGException("Can only specify one of " + CommandLineArgs.PORT
-                    + " and " + RemoteArgs.PORT);
-        }
-        m_debug = cla.debug;
-        remoteTestNg.setDebug(cla.debug);
+
+        m_debug = ra.debug;
+        remoteTestNg.setDebug(ra.debug);
         remoteTestNg.setAck(ra.ack);
 
         initAndRun(remoteTestNg, args, cla, ra);
@@ -226,17 +223,15 @@ public class RemoteTestNG {
     private static void initAndRun(IRemoteTestNG remoteTestNg, String[] args, CommandLineArgs cla, RemoteArgs ra) {
         if (m_debug) {
             // In debug mode, override the port and the XML file to a fixed location
-            cla.port = Integer.parseInt(DEBUG_PORT);
-            ra.serPort = cla.port;
+            ra.serPort = Integer.parseInt(DEBUG_PORT);
             cla.suiteFiles = Arrays.asList(new String[] {
                     DEBUG_SUITE_DIRECTORY + DEBUG_SUITE_FILE
             });
         }
         remoteTestNg.configure(cla);
-        remoteTestNg.setHost(cla.host);
+        remoteTestNg.setHost(ra.host);
         remoteTestNg.setSerPort(ra.serPort);
         remoteTestNg.setProtocol(ra.protocol);
-        remoteTestNg.setPort(cla.port);
         if (isVerbose()) {
             StringBuilder sb = new StringBuilder("Invoked with ");
             for (String s : args) {
