@@ -15,7 +15,7 @@ public class RemoteArgs {
   public String host;
 
   public static final String PORT = "-serport";
-  @Parameter(names = PORT, required = true, description = "The port for the serialization protocol")
+  @Parameter(names = PORT, description = "The port for the serialization protocol")
   public Integer serPort;
 
   public static final String PROTOCOL = "-protocol";

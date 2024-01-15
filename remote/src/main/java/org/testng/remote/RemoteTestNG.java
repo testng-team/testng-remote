@@ -72,8 +72,11 @@ public class RemoteTestNG {
             // use reflection below for backward compatibility of testng version < 7.10.0
             try {
                 Field debugField = CommandLineArgs.class.getDeclaredField("debug");
-                if (debugField.getBoolean(cla)) {
-                    debug = true;
+                Object d = debugField.get(cla);
+                if (d != null) {
+                    if (Boolean.valueOf(d.toString())) {
+                        debug = true;
+                    }
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 if (isDebug()) {
@@ -261,6 +264,21 @@ public class RemoteTestNG {
         remoteTestNg.setHost(host);
         remoteTestNg.setSerPort(ra.serPort);
         remoteTestNg.setProtocol(ra.protocol);
+
+        Integer port = null;
+        // use reflection below for backward compatibility of testng version < 7.10.0
+        try {
+            Field portField = CommandLineArgs.class.getDeclaredField("port");
+            Object p = portField.get(cla);
+            if (p != null) {
+                port = Integer.valueOf(p.toString());
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            if (isDebug()) {
+                e.printStackTrace();
+            }
+        }
+        remoteTestNg.setPort(port);
         if (isVerbose()) {
             StringBuilder sb = new StringBuilder("Invoked with ");
             for (String s : args) {

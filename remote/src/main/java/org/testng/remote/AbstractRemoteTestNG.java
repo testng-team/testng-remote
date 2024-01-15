@@ -162,7 +162,7 @@ public abstract class AbstractRemoteTestNG extends TestNG implements IRemoteTest
       }
     }
 
-    // fall back to original behivour
+    // fall back to original behaviour
     return m_serPort != null
         ? new SerializedMessageSender(m_host, m_serPort, m_ack)
         : new StringMessageSender(m_host, m_port);
