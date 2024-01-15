@@ -68,14 +68,17 @@ public class RemoteTestNG {
         remoteTestNg.dontExit(ra.dontExit);
 
         boolean debug = ra.debug;
-        try {
-            Field debugField = CommandLineArgs.class.getDeclaredField("debug");
-            if (debugField.getBoolean(cla)) {
-                debug = true;
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            if (isDebug()) {
-                e.printStackTrace();
+        if (!debug) {
+            // use reflection below for backward compatibility of testng version < 7.10.0
+            try {
+                Field debugField = CommandLineArgs.class.getDeclaredField("debug");
+                if (debugField.getBoolean(cla)) {
+                    debug = true;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                if (isDebug()) {
+                    e.printStackTrace();
+                }
             }
         }
         m_debug = debug;
@@ -240,7 +243,22 @@ public class RemoteTestNG {
             });
         }
         remoteTestNg.configure(cla);
-        remoteTestNg.setHost(ra.host);
+        String host = ra.host;
+        if (host == null || host.isBlank()) {
+            // use reflection below for backward compatibility of testng version < 7.10.0
+            try {
+                Field hostField = CommandLineArgs.class.getDeclaredField("host");
+                Object h = hostField.get(cla);
+                if (h != null) {
+                    host = (String) h;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                if (isDebug()) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        remoteTestNg.setHost(host);
         remoteTestNg.setSerPort(ra.serPort);
         remoteTestNg.setProtocol(ra.protocol);
         if (isVerbose()) {
