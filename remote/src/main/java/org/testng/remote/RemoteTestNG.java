@@ -67,8 +67,19 @@ public class RemoteTestNG {
         IRemoteTestNG remoteTestNg = factory.createRemoteTestNG();
         remoteTestNg.dontExit(ra.dontExit);
 
-        m_debug = ra.debug;
-        remoteTestNg.setDebug(ra.debug);
+        boolean debug = ra.debug;
+        try {
+            Field debugField = CommandLineArgs.class.getDeclaredField("debug");
+            if (debugField.getBoolean(cla)) {
+                debug = true;
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            if (isDebug()) {
+                e.printStackTrace();
+            }
+        }
+        m_debug = debug;
+        remoteTestNg.setDebug(debug);
         remoteTestNg.setAck(ra.ack);
 
         initAndRun(remoteTestNg, args, cla, ra);
@@ -275,8 +286,7 @@ public class RemoteTestNG {
     }
 
     public static boolean isVerbose() {
-        boolean result = System.getProperty(PROPERTY_VERBOSE) != null || isDebug();
-        return result;
+        return System.getProperty(PROPERTY_VERBOSE) != null || isDebug();
     }
 
     public static boolean isDebug() {

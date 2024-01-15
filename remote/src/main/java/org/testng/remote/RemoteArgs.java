@@ -6,11 +6,11 @@ import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 
 public class RemoteArgs {
-  public static final String DEBUG = "-debug";
+  public static final String DEBUG = "-serdebug";
   @Parameter(names = DEBUG, hidden = true, description = "Used to debug TestNG")
   public Boolean debug = Boolean.FALSE;
 
-  public static final String HOST = "-host";
+  public static final String HOST = "-serhost";
   @Parameter(names = HOST, description = "The host", hidden = true)
   public String host;
 
