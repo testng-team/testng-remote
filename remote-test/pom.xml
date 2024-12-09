@@ -11,7 +11,7 @@
     <name>TestNG Remote Test</name>
 
     <properties>
-        <groovy.version>2.3.11</groovy.version>
+        <groovy.version>2.4.21</groovy.version>
         <ivy.version>2.5.2</ivy.version>
         <skipIntTest>true</skipIntTest>
     </properties>
