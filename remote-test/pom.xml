@@ -12,7 +12,7 @@
 
     <properties>
         <groovy.version>2.3.11</groovy.version>
-        <ivy.version>2.5.2</ivy.version>
+        <ivy.version>2.5.3</ivy.version>
         <skipIntTest>true</skipIntTest>
     </properties>
 
